@@ -236,6 +236,11 @@ video_path = os.path.join(sys_logger.run_dir, f"{sys_logger.run_name}_recording.
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 video_writer = cv2.VideoWriter(video_path, fourcc, 30.0, (1280, 720))
 
+# Setup Video Writer to save in the same folder as the logs
+video_path = os.path.join(sys_logger.run_dir, f"{sys_logger.run_name}_recording.mp4")
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+video_writer = cv2.VideoWriter(video_path, fourcc, 30.0, (1280, 720))
+
 tracker = ObjectTracker()
 fps_meter = FPSMeter()
 
@@ -403,6 +408,8 @@ while True:
     draw_outlined_text(frame, action_text, (20, 120), 1.0, hud_color)
     draw_outlined_text(frame, f"RC Car Speed: {rc_car_speed_cm_s:.1f} cm/s", (20, 160), 0.8, (0, 255, 255))
 
+    video_writer.write(frame)
+    # Write the fully processed frame to the video file
     video_writer.write(frame)
     cv2.imshow("Live Diorama Feed", frame)
     key = cv2.waitKey(1) & 0xFF 
