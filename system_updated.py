@@ -236,17 +236,14 @@ video_path = os.path.join(sys_logger.run_dir, f"{sys_logger.run_name}_recording.
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 video_writer = cv2.VideoWriter(video_path, fourcc, 30.0, (1280, 720))
 
-# Setup Video Writer to save in the same folder as the logs
-video_path = os.path.join(sys_logger.run_dir, f"{sys_logger.run_name}_recording.mp4")
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-video_writer = cv2.VideoWriter(video_path, fourcc, 30.0, (1280, 720))
-
 tracker = ObjectTracker()
 fps_meter = FPSMeter()
 
 current_state = State.FOLLOW
 state_start_time = 0
 overtake_direction = "NONE"
+overtake_angle = 0.0          # Tracks the exact steering degree required
+LATERAL_OFFSET_M = 0.30       # The assumed sideways clearance in meters
 frame_count = 0
 
 while True:
@@ -283,7 +280,7 @@ while True:
                 if raw_dist != float('inf'):
                     dist, closing_speed, ttc, lat_speed = tracker.update(oid, raw_dist, current_fps, current_state, fp_x)
                     
-                    # ADAPTABLE DYNAMIC CHECK (Moved here to ensure the logger gets the accurate status)
+                    # ADAPTABLE DYNAMIC CHECK 
                     # It is dynamic if it darts sideways OR if it is still moving toward us while we are stopped
                     is_dynamic = lat_speed > 40.0 or (current_state in [State.OBSERVE, State.STOP_DYNAMIC] and closing_speed > 0.03)
 
@@ -356,23 +353,29 @@ while True:
 
         elif current_state == State.DECIDE:
             overtake_direction = "LEFT" if critical_obstacle['center_x'] > CX else "RIGHT"
+            longitudinal_dist = critical_obstacle['dist']
+            
+            # Mathematical calculation for the turning angle using inverse tangent
+            angle_radians = math.atan2(LATERAL_OFFSET_M, longitudinal_dist)
+            overtake_angle = math.degrees(angle_radians)
+            
             current_state = State.OVERTAKE
             state_start_time = time.time()
             action_text = "DECIDING DIRECTION"
             global_action = "STOP"
-            sys_logger.log_decision_event(frame_count, "Overtake_Planned", f"OVERTAKE {overtake_direction}", critical_obstacle['id'])
+            sys_logger.log_decision_event(frame_count, "Overtake_Planned", f"OVERTAKE {overtake_direction} AT {overtake_angle:.1f} DEG", critical_obstacle['id'])
 
         elif current_state == State.OVERTAKE:
             elapsed = time.time() - state_start_time
             hud_color = (255, 165, 0)
             global_action = "OVERTAKE"
             if elapsed < TIME_TURN:
-                action_text = f"TURN {overtake_direction}"
+                action_text = f"TURN {overtake_direction} {overtake_angle:.1f} DEG"
             elif elapsed < (TIME_TURN + TIME_PASS):
                 action_text = "DRIVE STRAIGHT"
             elif elapsed < (TIME_TURN + TIME_PASS + TIME_RETURN):
                 return_dir = "RIGHT" if overtake_direction == "LEFT" else "LEFT"
-                action_text = f"RETURN {return_dir}"
+                action_text = f"RETURN {return_dir} {overtake_angle:.1f} DEG"
             else:
                 current_state = State.REJOIN
                 state_start_time = time.time()
@@ -408,8 +411,6 @@ while True:
     draw_outlined_text(frame, action_text, (20, 120), 1.0, hud_color)
     draw_outlined_text(frame, f"RC Car Speed: {rc_car_speed_cm_s:.1f} cm/s", (20, 160), 0.8, (0, 255, 255))
 
-    video_writer.write(frame)
-    # Write the fully processed frame to the video file
     video_writer.write(frame)
     cv2.imshow("Live Diorama Feed", frame)
     key = cv2.waitKey(1) & 0xFF 
