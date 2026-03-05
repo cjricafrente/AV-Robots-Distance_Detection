@@ -10,7 +10,10 @@ from ultralytics import YOLO
 
 # --- CALIBRATION & EMPIRICAL TUNING ---
 camera_height_m = 0.23     
-camera_tilt_deg = 12.0      # <--- ENTER YOUR TRUE TILT HERE
+camera_tilt_deg = 12.0      
+CAMERA_BUMPER_OFFSET_M = 0.16 
+MAX_STEERING_ANGLE = 40.0     
+LATERAL_OFFSET_M = 0.25       
 
 try:
     calib_data = np.load('calibration_params.npz')
@@ -28,11 +31,12 @@ except Exception as e:
 # DIORAMA THRESHOLDS (Meters)
 D_STOP = 0.52             
 D_SLOW = 0.80    
+D_CLEARANCE = 0.90    # The required runway space for multiple static obstacles
 TTC_THRESHOLD = 2.0
 
 TIME_OBSERVE = 1.5 
 TIME_TURN = 1.0
-TIME_PASS = 1.5
+TIME_PASS = 2.0 
 TIME_RETURN = 1.0
 
 MEDIAN_WINDOW = 5
@@ -54,9 +58,11 @@ class FPSMeter:
         self.times = deque(maxlen=window_size)
     def tick(self):
         self.times.append(time.time())
-    def get_fps(self):
-        if len(self.times) < 2: return 30.0
-        return len(self.times) / (self.times[-1] - self.times[0])
+    def get_metrics(self):
+        if len(self.times) < 2: return 30.0, 33.3
+        fps = len(self.times) / (self.times[-1] - self.times[0])
+        delta_ms = (1.0 / fps) * 1000 if fps > 0 else 0
+        return fps, delta_ms
 
 class KalmanFilter1D:
     def __init__(self, initial_dist):
@@ -102,27 +108,21 @@ class ObjectTracker:
 
         track = self.tracks[object_id]
         
-        # Depth filtering
         track['history'].append(raw_distance)
         median_dist = np.median(track['history'])
         exp_dist = (DIST_ALPHA * median_dist) + ((1 - DIST_ALPHA) * track['exp_dist'])
         track['exp_dist'] = exp_dist
         final_dist, kalman_speed = track['kalman'].update_and_predict(exp_dist, dt)
         
-        # Calculate raw mathematical velocity
         new_speed = (SPEED_ALPHA * kalman_speed) + ((1 - SPEED_ALPHA) * track['speed'])
-        
-        # Calculate Closing Speed (Positive value means the object is getting closer)
         closing_speed = -new_speed
         
-        # Lateral filtering (Left/Right movement in pixels)
         track['x_history'].append(fp_x)
         median_x = np.median(track['x_history'])
         exp_x = (DIST_ALPHA * median_x) + ((1 - DIST_ALPHA) * track['exp_x'])
         lat_speed_px = abs(exp_x - track['exp_x']) * current_fps
         track['exp_x'] = exp_x
 
-        # Universal TTC Calculation (Calculates for ANYTHING getting closer)
         ttc = float('inf')
         if closing_speed > 0.01:
             ttc = final_dist / closing_speed 
@@ -217,10 +217,9 @@ def draw_outlined_text(img, text, pos, scale, color):
 print("Loading custom weights: best.pt")
 model = YOLO('best.pt') 
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-cap.set(cv2.CAP_PROP_FPS, 30)
 
 if not cap.isOpened():
     print("Error: Could not open the live camera feed.")
@@ -242,8 +241,7 @@ fps_meter = FPSMeter()
 current_state = State.FOLLOW
 state_start_time = 0
 overtake_direction = "NONE"
-overtake_angle = 0.0          # Tracks the exact steering degree required
-LATERAL_OFFSET_M = 0.30       # The assumed sideways clearance in meters
+overtake_angle = 0.0          
 frame_count = 0
 
 while True:
@@ -254,7 +252,7 @@ while True:
         
     h, w, _ = frame.shape
     fps_meter.tick()
-    current_fps = fps_meter.get_fps()
+    curr_fps, delta_ms = fps_meter.get_metrics()
     frame_count += 1
     
     results = model.track(frame, persist=True, stream=True, verbose=False)
@@ -262,7 +260,6 @@ while True:
     critical_obstacle = None
     min_dist = float('inf')
     all_detections = []
-    rc_car_speed_cm_s = 0.0 
     
     for r in results:
         if r.boxes.id is not None:
@@ -278,10 +275,8 @@ while True:
                 raw_dist = calculate_calibrated_distance(fp_x, fp_y, camera_height_m, camera_tilt_deg)
                 
                 if raw_dist != float('inf'):
-                    dist, closing_speed, ttc, lat_speed = tracker.update(oid, raw_dist, current_fps, current_state, fp_x)
+                    dist, closing_speed, ttc, lat_speed = tracker.update(oid, raw_dist, curr_fps, current_state, fp_x)
                     
-                    # ADAPTABLE DYNAMIC CHECK 
-                    # It is dynamic if it darts sideways OR if it is still moving toward us while we are stopped
                     is_dynamic = lat_speed > 40.0 or (current_state in [State.OBSERVE, State.STOP_DYNAMIC] and closing_speed > 0.03)
 
                     detection_data = {
@@ -305,16 +300,8 @@ while True:
     if critical_obstacle:
         dist = critical_obstacle['dist']
         ttc = critical_obstacle['ttc']
-        closing_speed = critical_obstacle['speed']
-        is_dynamic = critical_obstacle['is_dynamic']
         
-        # Display the car speed roughly based on closing speed while driving
-        if current_state in [State.FOLLOW, State.SLOW] and not is_dynamic:
-            rc_car_speed_cm_s = closing_speed * 100
-            if rc_car_speed_cm_s < 0: rc_car_speed_cm_s = 0.0 
-
         if current_state in [State.FOLLOW, State.SLOW]:
-            # Universal Safety Net: React to TTC or Distance regardless of static/dynamic label
             if ttc <= TTC_THRESHOLD or dist <= D_STOP:
                 current_state = State.OBSERVE
                 state_start_time = time.time()
@@ -333,31 +320,36 @@ while True:
             hud_color = (0, 0, 255)
             global_action = "STOP"
             
-            # The Brake Test: The car is physically stopped. Does the object keep moving?
-            if is_dynamic:
+            dynamic_threat = any(obj['is_dynamic'] for obj in all_detections)
+            clearance_zone_obstacles = [obj for obj in all_detections if obj['dist'] <= D_CLEARANCE]
+            
+            if dynamic_threat:
                 current_state = State.STOP_DYNAMIC
                 action_text = "STOP (DYNAMIC THREAT)"
                 sys_logger.log_decision_event(frame_count, "Dynamic_Confirmed", "STOP", critical_obstacle['id'])
             elif time.time() - state_start_time > TIME_OBSERVE:
-                # 1.5 seconds passed and the object is NOT moving. It is confirmed STATIC.
-                current_state = State.DECIDE
-                state_start_time = time.time()
+                if len(clearance_zone_obstacles) > 1:
+                    action_text = f"MULTIPLE OBSTACLES: CLEARANCE < {int(D_CLEARANCE*100)}CM"
+                    hud_color = (0, 0, 255)
+                    state_start_time = time.time() 
+                else:
+                    current_state = State.DECIDE
+                    state_start_time = time.time()
 
         elif current_state == State.STOP_DYNAMIC:
             action_text = "STOP (WAITING FOR CLEAR PATH)"
             hud_color = (0, 0, 255)
             global_action = "STOP"
-            # If the object stops moving or moves away, revert to driving
-            if not is_dynamic and closing_speed < 0.02:
+            dynamic_threat = any(obj['is_dynamic'] for obj in all_detections)
+            if not dynamic_threat:
                 current_state = State.FOLLOW
 
         elif current_state == State.DECIDE:
             overtake_direction = "LEFT" if critical_obstacle['center_x'] > CX else "RIGHT"
-            longitudinal_dist = critical_obstacle['dist']
             
-            # Mathematical calculation for the turning angle using inverse tangent
-            angle_radians = math.atan2(LATERAL_OFFSET_M, longitudinal_dist)
-            overtake_angle = math.degrees(angle_radians)
+            bumper_dist = max(0.01, critical_obstacle['dist'] - CAMERA_BUMPER_OFFSET_M)
+            raw_angle = math.degrees(math.atan2(LATERAL_OFFSET_M, bumper_dist))
+            overtake_angle = min(raw_angle, MAX_STEERING_ANGLE)
             
             current_state = State.OVERTAKE
             state_start_time = time.time()
@@ -390,7 +382,7 @@ while True:
         if current_state == State.STOP_DYNAMIC:
             current_state = State.FOLLOW
             
-    sys_logger.log_frame(frame_count, current_fps, len(all_detections), global_action)
+    sys_logger.log_frame(frame_count, curr_fps, len(all_detections), global_action)
 
     # --- DRAWING ---
     for d in all_detections:
@@ -402,14 +394,14 @@ while True:
         cv2.circle(frame, d['fp'], 5, (0, 0, 255), -1)
         
         dist_cm = d['dist'] * 100 
-        if is_crit:
-            data_str = f"Dist:{dist_cm:.1f}cm | TTC:{d['ttc']:.1f}s"
-            draw_outlined_text(frame, data_str, (x1, y1 - 5), 0.6, color)
+        # Removed the "if is_crit:" restriction so all obstacles display their distance and TTC
+        data_str = f"Dist:{dist_cm:.1f}cm | TTC:{d['ttc']:.1f}s"
+        draw_outlined_text(frame, data_str, (x1, y1 - 5), 0.6, color)
 
     draw_outlined_text(frame, "LIVE DIORAMA TEST (RECORDING)", (20, 40), 1.0, (255, 255, 255))
     draw_outlined_text(frame, f"STATE: {current_state}", (20, 80), 1.0, (255, 255, 255))
     draw_outlined_text(frame, action_text, (20, 120), 1.0, hud_color)
-    draw_outlined_text(frame, f"RC Car Speed: {rc_car_speed_cm_s:.1f} cm/s", (20, 160), 0.8, (0, 255, 255))
+    draw_outlined_text(frame, f"FPS: {curr_fps:.1f} | Delta: {delta_ms:.1f} ms", (20, 160), 0.8, (0, 255, 255))
 
     video_writer.write(frame)
     cv2.imshow("Live Diorama Feed", frame)
@@ -419,6 +411,6 @@ while True:
 
 cap.release()
 video_writer.release()
-sys_logger.close(frame_count, fps_meter.get_fps())
+sys_logger.close(frame_count, curr_fps)
 cv2.destroyAllWindows()
 print(f"Live evaluation complete. Video and logs saved in {sys_logger.run_dir}")
