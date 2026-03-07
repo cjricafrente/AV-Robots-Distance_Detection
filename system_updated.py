@@ -9,9 +9,9 @@ from collections import deque
 from ultralytics import YOLO
 
 # --- OPTIMIZATION CONFIGURATION ---
-SKIP_FRAMES = 2  # 1 = YOLO every frame, 2 = YOLO ev2ery other frame, 3 = YOLO every 3rd frame
+SKIP_FRAMES = 2  # 1 = YOLO every frame, 2 = YOLO every other frame
 TARGET_WIDTH = 640
-TARGET_HEIGHT = 360 # 360 preserves the 16:9 aspect ratio of 1280x720!
+TARGET_HEIGHT = 360 # Preserves 16:9 aspect ratio
 
 # --- CALIBRATION & EMPIRICAL TUNING ---
 camera_height_m = 0.23
@@ -19,11 +19,10 @@ camera_tilt_deg = 12.0
 
 try:
     calib_data = np.load('calibration_params.npz')
-    CAMERA_MATRIX = calib_data['camera_matrix'].copy() # Copy to allow modification
+    CAMERA_MATRIX = calib_data['camera_matrix'].copy()
     DIST_COEFFS = calib_data['dist_coeffs']
     
-    # [OPTIMIZATION]: Scale the calibration parameters to match the new 640x360 resolution
-    # Original was likely 1280x720. 640/1280 = 0.5 scale factor.
+    # Scale parameters for the new 640x360 resolution
     scale_x = TARGET_WIDTH / 1280.0
     scale_y = TARGET_HEIGHT / 720.0
     
@@ -36,13 +35,12 @@ try:
     CAMERA_MATRIX[1, 2] = CY
     CAMERA_MATRIX[0, 0] = FX
     CAMERA_MATRIX[1, 1] = FY
-    
     print("Successfully loaded and scaled calibration_params.npz")
 except Exception as e:
     print(f"Error loading calibration: {e}")
     exit()
 
-# DIORAMA THRESHOLDS (Meters)
+# DIORAMA THRESHOLDS
 D_STOP = 0.52
 D_SLOW = 0.80
 TTC_THRESHOLD = 2.0
@@ -110,7 +108,6 @@ class ObjectTracker:
         exp_dist = (DIST_ALPHA * median_dist) + ((1 - DIST_ALPHA) * track['exp_dist'])
         track['exp_dist'] = exp_dist
         final_dist, kalman_speed = track['kalman'].update_and_predict(exp_dist, dt)
-
         new_speed = (SPEED_ALPHA * kalman_speed) + ((1 - SPEED_ALPHA) * track['speed'])
         closing_speed = -new_speed
 
@@ -126,7 +123,6 @@ class ObjectTracker:
 
         track['speed'] = new_speed
         track['last_time'] = current_time
-
         return final_dist, closing_speed, ttc, lat_speed_px
 
 class SystemLogger:
@@ -170,8 +166,102 @@ class SystemLogger:
     def close(self, total_frames, avg_fps):
         self.frame_file.close()
         self.obj_file.close()
-        # Skipped writing the heavy JSON evaluation reports for brevity in this test snippet, 
-        # but you can leave your original evaluation reporting code here!
+
+        with open(os.path.join(self.run_dir, f"{self.run_name}_decision_log.json"), 'w') as f:
+            json.dump(self.decision_events, f, indent=4)
+
+        summary = {
+            "total_frames": total_frames,
+            "average_fps": round(avg_fps, 2),
+            "action_distribution": self.action_counts
+        }
+        with open(os.path.join(self.run_dir, f"{self.run_name}_clip_summary.json"), 'w') as f:
+            json.dump(summary, f, indent=4)
+
+        # --- FULL EVALUATION REPORT METRICS (RESTORED) ---
+        report = {
+            "run_name": self.run_name,
+            "total_frames": total_frames,
+            "average_fps": round(avg_fps, 2),
+            "ground_truth_m": EVAL_GROUND_TRUTH_M,
+        }
+
+        EVAL_MAX_RELIABLE_DIST_M = 0.85
+        EVAL_PLAUSIBILITY_BAND_M = 0.40
+
+        if EVAL_GROUND_TRUTH_M is not None and self.eval_dist_histories:
+            candidate_tracks = {
+                tid: dists
+                for tid, dists in self.eval_dist_histories.items()
+                if dists and
+                   float(np.mean(dists)) <= EVAL_MAX_RELIABLE_DIST_M and
+                   abs(float(np.mean(dists)) - EVAL_GROUND_TRUTH_M) <= EVAL_PLAUSIBILITY_BAND_M
+            }
+
+            if candidate_tracks:
+                primary_tid = max(candidate_tracks, key=lambda tid: len(candidate_tracks[tid]))
+                primary_dists = candidate_tracks[primary_tid]
+                errors = [abs(d - EVAL_GROUND_TRUTH_M) for d in primary_dists]
+                sq_errors = [e ** 2 for e in errors]
+
+                mae = float(np.mean(errors))
+                rmse = float(np.sqrt(np.mean(sq_errors)))
+                p95_error = float(np.percentile(errors, 95))
+
+                report["distance_accuracy"] = {
+                    "primary_track_id": primary_tid,
+                    "candidates_after_filter": len(candidate_tracks),
+                    "tracks_rejected": len(self.eval_dist_histories) - len(candidate_tracks),
+                    "sample_count": len(primary_dists),
+                    "mean_dist_m": round(float(np.mean(primary_dists)), 4),
+                    "std_dist_m": round(float(np.std(primary_dists)), 4),
+                    "MAE_m": round(mae, 4),
+                    "RMSE_m": round(rmse, 4),
+                    "p95_error_m": round(p95_error, 4),
+                }
+            else:
+                all_means = {str(tid): round(float(np.mean(dists)), 4) for tid, dists in self.eval_dist_histories.items() if dists}
+                report["distance_accuracy"] = {
+                    "error": "no_plausible_track_found",
+                    "max_reliable_dist_m": EVAL_MAX_RELIABLE_DIST_M,
+                    "plausibility_band_m": EVAL_PLAUSIBILITY_BAND_M,
+                    "ground_truth_m": EVAL_GROUND_TRUTH_M,
+                    "track_mean_dists": all_means,
+                }
+        else:
+            report["distance_accuracy"] = "skipped_no_ground_truth" if EVAL_GROUND_TRUTH_M is None else "no_detections_logged"
+
+        track_stability = {}
+        for tid, dists in self.eval_dist_histories.items():
+            lifespan = len(dists)
+            if lifespan >= 2:
+                frame_diffs = [dists[i] - dists[i - 1] for i in range(1, lifespan)]
+                ftf_variance = float(np.var(frame_diffs))
+                ftf_std = float(np.std(frame_diffs))
+            else:
+                ftf_variance = None
+                ftf_std = None
+
+            track_stability[str(tid)] = {
+                "lifespan_frames": lifespan,
+                "ftf_variance_m2": round(ftf_variance, 6) if ftf_variance is not None else None,
+                "ftf_std_m": round(ftf_std, 6) if ftf_std is not None else None,
+            }
+
+        valid_variances = [v["ftf_variance_m2"] for v in track_stability.values() if v["ftf_variance_m2"] is not None]
+
+        report["temporal_stability"] = {
+            "per_track": track_stability,
+            "total_unique_track_ids": len(self.eval_dist_histories),
+            "mean_track_lifespan_frames": round(float(np.mean([v["lifespan_frames"] for v in track_stability.values()])), 2) if track_stability else 0.0,
+            "mean_ftf_variance_m2": round(float(np.mean(valid_variances)), 6) if valid_variances else None,
+        }
+
+        report_path = os.path.join(self.run_dir, f"{self.run_name}_evaluation_report.json")
+        with open(report_path, 'w') as f:
+            json.dump(report, f, indent=4)
+            
+        print(f"\n--- Evaluation Report Saved: {report_path} ---")
 
 def calculate_calibrated_distance(footpoint_x, footpoint_y, current_h, current_tilt):
     pixel_point = np.array([[[float(footpoint_x), float(footpoint_y)]]], dtype=np.float32)
@@ -189,10 +279,8 @@ def draw_outlined_text(img, text, pos, scale, color):
     cv2.putText(img, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, scale, (0, 0, 0), 4)
     cv2.putText(img, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, scale, color, 2)
 
-
 # --- LIVE EXECUTION SETUP ---
 print("Loading custom weights: best.pt")
-# IF YOU EXPORTED TO NCNN, change this to: YOLO('best_ncnn_model')
 model = YOLO('best.pt') 
 
 cap = cv2.VideoCapture('for_testing.mp4') 
@@ -206,15 +294,11 @@ print("Press 'q' in the video window to stop the run and save logs.")
 run_timestamp = time.strftime("%Y%m%d-%H%M%S")
 sys_logger = SystemLogger(f"live_run_{run_timestamp}")
 
-# [OPTIMIZATION]: RAM SAVING SETUP
 frames_in_ram = [] 
 video_path = os.path.join(sys_logger.run_dir, f"{sys_logger.run_name}_recording.mp4")
 
 tracker = ObjectTracker()
-
-# [OPTIMIZATION]: INFERENCE SKIPPING SETUP
-active_trackers = {} # Stores {track_id: cv2.TrackerKCF}
-last_known_detections = [] # Stores object metadata between YOLO frames
+active_trackers = {} 
 
 current_state = State.FOLLOW
 state_start_time = 0
@@ -228,10 +312,8 @@ prev_time = time.time()
 while True:
     success, frame = cap.read()
     if not success:
-        print("Camera feed finished.")
         break
         
-    # [OPTIMIZATION]: Resize frame to our targeted smaller resolution
     frame = cv2.resize(frame, (TARGET_WIDTH, TARGET_HEIGHT))
 
     current_time = time.time()
@@ -247,9 +329,7 @@ while True:
     min_dist = float('inf')
     all_detections = []
 
-    # --- INFERENCE SKIPPING LOGIC ---
     if frame_count % SKIP_FRAMES == 0 or frame_count == 1:
-        # Run Heavy YOLO Model
         results = model.track(frame, persist=True, stream=False, verbose=False)
         active_trackers.clear()
         
@@ -262,9 +342,17 @@ while True:
                     oid = track_ids[i]
                     label_name = model.names[int(box.cls[0])]
                     
-                    # Initialize lightweight tracker for skipped frames
                     bbox = (x1, y1, x2 - x1, y2 - y1)
-                    kcf_tracker = cv2.TrackerKCF_create()
+                    
+                    # [BULLETPROOF TRACKER INITIALIZATION]
+                    try:
+                        kcf_tracker = cv2.TrackerKCF.create()
+                    except AttributeError:
+                        try:
+                            kcf_tracker = cv2.legacy.TrackerKCF_create()
+                        except AttributeError:
+                            kcf_tracker = cv2.TrackerKCF_create()
+                            
                     kcf_tracker.init(frame, bbox)
                     active_trackers[oid] = {'tracker': kcf_tracker, 'label': label_name}
                     
@@ -283,10 +371,7 @@ while True:
                             'is_dynamic': is_dynamic
                         }
                         all_detections.append(detection_data)
-        
-        last_known_detections = all_detections
     else:
-        # Run Lightweight Tracker (Blinking)
         for oid, track_info in list(active_trackers.items()):
             kcf_tracker = track_info['tracker']
             label_name = track_info['label']
@@ -311,19 +396,14 @@ while True:
                     }
                     all_detections.append(detection_data)
             else:
-                # Lost track, remove from active trackers until next YOLO frame
                 del active_trackers[oid]
-                
-        last_known_detections = all_detections
 
-    # Find critical obstacle from aggregated detections
     for d in all_detections:
         sys_logger.log_object(frame_count, d)
         if d['dist'] < min_dist:
             min_dist = d['dist']
             critical_obstacle = d
 
-    # --- DECISION FSM (Unchanged) ---
     if critical_obstacle is not None:
         last_obstacle_seen_time = current_time
 
@@ -348,20 +428,17 @@ while True:
         else:
             current_state    = State.REJOIN
             state_start_time = time.time()
-
     elif current_state == State.REJOIN:
         action_text   = "REALIGNING"
         hud_color     = (255, 255, 0)
         global_action = "OVERTAKE"
         if time.time() - state_start_time > 1.0:
             current_state = State.FOLLOW
-
     elif critical_obstacle:
         dist          = critical_obstacle['dist']
         ttc           = critical_obstacle['ttc']
         closing_speed = critical_obstacle['speed']
         is_dynamic    = critical_obstacle['is_dynamic']
-
         show_speed = True
         display_speed_cm_s = max(0.0, closing_speed * 100)
         speed_label = "Relative Closing Speed"
@@ -414,16 +491,13 @@ while True:
 
     sys_logger.log_frame(frame_count, current_fps, len(all_detections), global_action)
 
-    # DRAWING HUD
     for d in all_detections:
         x1, y1, x2, y2 = d['box']
         is_crit = (critical_obstacle and d['id'] == critical_obstacle['id'])
-        
-        # Color the box slightly differently if it's a predicted frame vs a YOLO frame
         if frame_count % SKIP_FRAMES == 0:
-            color = hud_color if is_crit else (200, 200, 200) # Standard Colors
+            color = hud_color if is_crit else (200, 200, 200) 
         else:
-            color = (0, 255, 255) if is_crit else (0, 100, 100) # Yellowish during Tracked "Blink" frames
+            color = (0, 255, 255) if is_crit else (0, 100, 100) 
 
         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
         cv2.circle(frame, d['fp'], 5, (0, 0, 255), -1)
@@ -431,20 +505,16 @@ while True:
         dist_cm = d['dist'] * 100
         state_str = "DYN" if d['is_dynamic'] else "STAT"
         data_str = f"Dist:{dist_cm:.1f}cm | TTC:{d['ttc']:.1f}s | {state_str}"
-        draw_outlined_text(frame, data_str, (x1, y1 - 5), 0.4, color) # Scaled text down slightly for smaller 640x360 window
+        draw_outlined_text(frame, data_str, (x1, y1 - 5), 0.4, color) 
 
     draw_outlined_text(frame, "LIVE DIORAMA TEST (RECORDING)", (10, 20), 0.6, (255, 255, 255))
     draw_outlined_text(frame, f"STATE: {current_state}", (10, 45), 0.6, (255, 255, 255))
     draw_outlined_text(frame, action_text, (10, 70), 0.6, hud_color)
-    
     if show_speed:
         draw_outlined_text(frame, f"{speed_label}: {display_speed_cm_s:.1f} cm/s", (10, 95), 0.5, (0, 255, 255))
-        
     draw_outlined_text(frame, f"FPS: {current_fps:.1f} | dt: {dt*1000:.1f}ms", (10, 120), 0.5, (200, 200, 200))
 
-    # [OPTIMIZATION]: Save to RAM instead of disk during the run
     frames_in_ram.append(frame.copy())
-    
     cv2.imshow("Optimized Feed Test", frame)
 
     key = cv2.waitKey(1) & 0xFF
