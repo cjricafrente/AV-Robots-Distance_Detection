@@ -273,7 +273,7 @@ Planned enhancements include:
 * Paul Christian M. Mandap
 * Carl Joshua D. Ricafrente
 
-Technological Institute of the Philippines – Manila
+Technological Institute of the Philippines – Manila.
 
 ---
 
