@@ -40,10 +40,13 @@ SPEED_ALPHA = 0.3
 # Seconds before aborting DECIDE if the obstacle stays invisible (blind-spot guard).
 BLIND_SPOT_TIMEOUT = 2.0
 
+<<<<<<< HEAD
 # --- HARDWARE GEOMETRY CONSTANTS ---
 CAMERA_BUMPER_OFFSET_M = 0.16   # Distance from camera lens to front bumper (m)
 MAX_STEERING_ANGLE     = 40.0   # Hard cap on computed steering angle (degrees)
 
+=======
+>>>>>>> main
 # --- EVALUATION CONFIGURATION ---
 # Set to the known ground-truth distance (m) for calibration clips.
 # Set to None for dynamic/live runs to skip accuracy metrics.
@@ -307,7 +310,11 @@ def draw_outlined_text(img, text, pos, scale, color):
 print("Loading custom weights: best.pt")
 model = YOLO('best.pt')
 
+<<<<<<< HEAD
 cap = cv2.VideoCapture('for_testing.mp4') # Ensure this matches your camera index
+=======
+cap = cv2.VideoCapture(1) # Ensure this matches your camera index
+>>>>>>> main
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 cap.set(cv2.CAP_PROP_FPS, 30)
@@ -500,6 +507,7 @@ while True:
             overtake_direction = "LEFT" if critical_obstacle['center_x'] > CX else "RIGHT"
             longitudinal_dist  = critical_obstacle['dist']
 
+<<<<<<< HEAD
             # [Groupmate] Dynamic lateral offset from observed pixel width
             x1, y1, x2, y2        = critical_obstacle['box']
             obstacle_width_meters  = (abs(x2 - x1) * longitudinal_dist) / FX
@@ -509,6 +517,14 @@ while True:
             bumper_dist  = max(0.01, longitudinal_dist - CAMERA_BUMPER_OFFSET_M)
             angle_radians = math.atan2(dynamic_lateral_offset, bumper_dist)
             overtake_angle = min(math.degrees(angle_radians), MAX_STEERING_ANGLE)
+=======
+            x1, y1, x2, y2       = critical_obstacle['box']
+            obstacle_width_meters = (abs(x2 - x1) * longitudinal_dist) / FX
+            dynamic_lateral_offset = (obstacle_width_meters / 2) + 0.20
+
+            angle_radians = math.atan2(dynamic_lateral_offset, longitudinal_dist)
+            overtake_angle = math.degrees(angle_radians)
+>>>>>>> main
 
             current_state    = State.OVERTAKE
             state_start_time = time.time()
@@ -518,7 +534,11 @@ while True:
                 frame_count,
                 "Overtake_Planned",
                 f"OVERTAKE {overtake_direction} AT {overtake_angle:.1f} DEG "
+<<<<<<< HEAD
                 f"(offset={dynamic_lateral_offset:.3f}m, bumper_dist={bumper_dist:.3f}m)",
+=======
+                f"(offset={dynamic_lateral_offset:.3f}m)",
+>>>>>>> main
                 critical_obstacle['id']
             )
 
