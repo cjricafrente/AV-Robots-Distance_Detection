@@ -5,7 +5,6 @@ import numpy as np
 import csv
 import os
 import json
-import shutil
 from collections import deque
 from ultralytics import YOLO
 
@@ -302,9 +301,6 @@ ram_video_path = f"/dev/shm/{sys_logger.run_name}_recording.mp4"
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 video_writer = cv2.VideoWriter(ram_video_path, fourcc, 30.0, (TARGET_WIDTH, TARGET_HEIGHT))
 
-# Permanent storage path (on the SD card)
-final_video_path = os.path.join(sys_logger.run_dir, f"{sys_logger.run_name}_recording.mp4")
-
 tracker = ObjectTracker()
 active_trackers = {} 
 
@@ -536,14 +532,9 @@ cap.release()
 video_writer.release()
 cv2.destroyAllWindows()
 
-print(f"\nRun finished. Transferring video from /dev/shm (RAM) to SD Card...")
-# We use the built-in shutil library to copy the file from the volatile RAM to your permanent project folder
-try:
-    shutil.copy(ram_video_path, final_video_path)
-    os.remove(ram_video_path)  # Clean up the RAM
-    print(f"Video safely transferred to {final_video_path}!")
-except Exception as e:
-    print(f"Warning: Could not copy video from RAM. Error: {e}")
+print(f"\nRun finished. The video has been saved temporarily to the Pi's RAM.")
+print(f"You can manually copy it from this location: {ram_video_path}")
+print("NOTE: Make sure to copy it to your SD card before turning off the Pi, as RAM is wiped on shutdown.")
 
 total_elapsed = time.time() - run_start_time
 avg_fps = frame_count / total_elapsed if total_elapsed > 0 else 0.0
