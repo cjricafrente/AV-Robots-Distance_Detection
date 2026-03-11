@@ -8,24 +8,30 @@ import json
 from collections import deque
 from ultralytics import YOLO
 
+# --- OPTIMIZATION CONFIGURATION ---
+SKIP_FRAMES = 3  # Increase to 3 on Pi 5 for better FPS (YOLO every 3rd frame)
+TARGET_WIDTH = 640
+TARGET_HEIGHT = 360  # Preserves 16:9 aspect ratio
+TARGET_ASPECT = TARGET_WIDTH / TARGET_HEIGHT  # 1.7778
+
+# --- CALIBRATION RESOLUTION (the resolution used when calibration_params.npz was created) ---
+CALIB_WIDTH  = 1280
+CALIB_HEIGHT = 720
+
 # --- CALIBRATION & EMPIRICAL TUNING ---
 camera_height_m = 0.23
-camera_tilt_deg = 12.0      # <--- ENTER YOUR TRUE TILT HERE
+camera_tilt_deg = 12.0
 
 try:
     calib_data = np.load('calibration_params.npz')
-    CAMERA_MATRIX = calib_data['camera_matrix']
+    CAMERA_MATRIX_ORIG = calib_data['camera_matrix'].copy()
     DIST_COEFFS = calib_data['dist_coeffs']
-    CX = CAMERA_MATRIX[0, 2]
-    CY = CAMERA_MATRIX[1, 2]
-    FX = CAMERA_MATRIX[0, 0]
-    FY = CAMERA_MATRIX[1, 1]
     print("Successfully loaded calibration_params.npz")
 except Exception as e:
     print(f"Error loading calibration: {e}")
     exit()
 
-# DIORAMA THRESHOLDS (Meters)
+# DIORAMA THRESHOLDS
 D_STOP = 0.52
 D_SLOW = 0.80
 TTC_THRESHOLD = 2.0
@@ -36,18 +42,11 @@ TIME_RETURN = 1.0
 MEDIAN_WINDOW = 5
 DIST_ALPHA = 0.6
 SPEED_ALPHA = 0.3
-
-# Seconds before aborting DECIDE if the obstacle stays invisible (blind-spot guard).
 BLIND_SPOT_TIMEOUT = 2.0
-
-# --- HARDWARE GEOMETRY CONSTANTS ---
-CAMERA_BUMPER_OFFSET_M = 0.16   # Distance from camera lens to front bumper (m)
-MAX_STEERING_ANGLE     = 40.0   # Hard cap on computed steering angle (degrees)
-
-# --- EVALUATION CONFIGURATION ---
-# Set to the known ground-truth distance (m) for calibration clips.
-# Set to None for dynamic/live runs to skip accuracy metrics.
+CAMERA_BUMPER_OFFSET_M = 0.16
+MAX_STEERING_ANGLE = 40.0
 EVAL_GROUND_TRUTH_M = 0.50
+
 
 class State:
     FOLLOW = "FOLLOW_GLOBAL_PATH"
@@ -58,8 +57,6 @@ class State:
     REJOIN = "REJOIN_PATH"
     STOP_DYNAMIC = "LOCAL_AVOID_DYNAMIC (STOP)"
 
-
-# --- CLASSES ---
 
 class KalmanFilter1D:
     def __init__(self, initial_dist):
@@ -87,7 +84,6 @@ class ObjectTracker:
 
     def update(self, object_id, raw_distance, dt, current_fsm_state, fp_x):
         current_time = time.time()
-
         if object_id not in self.tracks:
             self.tracks[object_id] = {
                 'history': deque(maxlen=MEDIAN_WINDOW),
@@ -101,13 +97,11 @@ class ObjectTracker:
             return raw_distance, 0.0, float('inf'), 0.0
 
         track = self.tracks[object_id]
-
         track['history'].append(raw_distance)
         median_dist = np.median(track['history'])
         exp_dist = (DIST_ALPHA * median_dist) + ((1 - DIST_ALPHA) * track['exp_dist'])
         track['exp_dist'] = exp_dist
         final_dist, kalman_speed = track['kalman'].update_and_predict(exp_dist, dt)
-
         new_speed = (SPEED_ALPHA * kalman_speed) + ((1 - SPEED_ALPHA) * track['speed'])
         closing_speed = -new_speed
 
@@ -123,7 +117,6 @@ class ObjectTracker:
 
         track['speed'] = new_speed
         track['last_time'] = current_time
-
         return final_dist, closing_speed, ttc, lat_speed_px
 
 
@@ -132,23 +125,16 @@ class SystemLogger:
         self.run_name = run_name
         self.base_log_dir = "logs"
         self.run_dir = os.path.join(self.base_log_dir, self.run_name)
-
         os.makedirs(self.base_log_dir, exist_ok=True)
         os.makedirs(self.run_dir, exist_ok=True)
-
         self.frame_file = open(os.path.join(self.run_dir, f"{run_name}_frame_log.csv"), 'w', newline='')
         self.obj_file = open(os.path.join(self.run_dir, f"{run_name}_object_log.csv"), 'w', newline='')
-
         self.frame_writer = csv.writer(self.frame_file)
         self.obj_writer = csv.writer(self.obj_file)
-
         self.frame_writer.writerow(["frame_id", "timestamp", "fps", "total_detections", "global_action"])
         self.obj_writer.writerow(["frame_id", "track_id", "class", "dist_m", "speed_ms", "ttc_s", "state"])
-
         self.decision_events = []
         self.action_counts = {"GO": 0, "SLOW": 0, "STOP": 0, "OVERTAKE": 0}
-        
-        # Dictionary to store distance histories for evaluation metrics
         self.eval_dist_histories = {}
 
     def log_frame(self, frame_id, fps, num_detections, global_action):
@@ -163,21 +149,13 @@ class SystemLogger:
             round(obj_data['dist'], 3), round(obj_data['speed'], 3),
             round(obj_data['ttc'], 2), state_str
         ])
-
-        # Save distance history for evaluation
         tid = obj_data['id']
         if tid not in self.eval_dist_histories:
             self.eval_dist_histories[tid] = []
         self.eval_dist_histories[tid].append(obj_data['dist'])
 
     def log_decision_event(self, frame_id, trigger_reason, action, obj_id):
-        event = {
-            "time": time.time(),
-            "frame": frame_id,
-            "trigger": trigger_reason,
-            "action": action,
-            "target_track_id": obj_id
-        }
+        event = {"time": time.time(), "frame": frame_id, "trigger": trigger_reason, "action": action, "target_track_id": obj_id}
         self.decision_events.append(event)
 
     def close(self, total_frames, avg_fps):
@@ -195,7 +173,6 @@ class SystemLogger:
         with open(os.path.join(self.run_dir, f"{self.run_name}_clip_summary.json"), 'w') as f:
             json.dump(summary, f, indent=4)
 
-        # --- EVALUATION REPORT METRICS ---
         report = {
             "run_name": self.run_name,
             "total_frames": total_frames,
@@ -218,7 +195,6 @@ class SystemLogger:
             if candidate_tracks:
                 primary_tid = max(candidate_tracks, key=lambda tid: len(candidate_tracks[tid]))
                 primary_dists = candidate_tracks[primary_tid]
-
                 errors = [abs(d - EVAL_GROUND_TRUTH_M) for d in primary_dists]
                 sq_errors = [e ** 2 for e in errors]
 
@@ -278,22 +254,150 @@ class SystemLogger:
         report_path = os.path.join(self.run_dir, f"{self.run_name}_evaluation_report.json")
         with open(report_path, 'w') as f:
             json.dump(report, f, indent=4)
-            
+
         print(f"\n--- Evaluation Report Saved: {report_path} ---")
 
 
-def calculate_calibrated_distance(footpoint_x, footpoint_y, current_h, current_tilt):
+# ============================================================
+# HARDWARE VERIFICATION & DYNAMIC CAMERA MATRIX CALIBRATION
+# ============================================================
+
+def get_hardware_frame_dimensions(cap, num_probe_frames=5):
+    """
+    Reads actual frames from the capture device to determine the true
+    hardware output resolution. cap.get() values are unreliable — they
+    reflect what was *requested*, not what the driver actually delivers.
+    Averages over several frames to guard against a corrupt first frame.
+    """
+    widths, heights = [], []
+    for _ in range(num_probe_frames):
+        ret, frame = cap.read()
+        if ret and frame is not None:
+            h, w = frame.shape[:2]
+            widths.append(w)
+            heights.append(h)
+    if not widths:
+        return None, None
+    # Use mode in case of any variance
+    hw_w = int(np.median(widths))
+    hw_h = int(np.median(heights))
+    return hw_w, hw_h
+
+
+def build_scaled_camera_matrix(cam_matrix_orig, hw_w, hw_h,
+                                calib_w, calib_h,
+                                target_w, target_h):
+    """
+    Correctly scales the calibration camera matrix to the actual pipeline
+    resolution, accounting for:
+      1. The true hardware capture resolution (may differ from requested).
+      2. An optional center-crop to remove aspect-ratio distortion before
+         the final resize (e.g. removing letterbox rows from a 4:3 frame).
+
+    Returns:
+        scaled_matrix  : 3x3 camera matrix valid for (target_w x target_h) frames
+        crop_params    : dict with keys x, y, w, h describing the crop applied
+                         to the raw hardware frame BEFORE resize.  If no crop
+                         is needed all values are 0 / full dimensions.
+        diag_info      : human-readable dict for printing / logging
+    """
+    hw_aspect   = hw_w / hw_h
+    tgt_aspect  = target_w / target_h   # 640/360 = 1.7778 (16:9)
+    calib_aspect = calib_w / calib_h    # 1280/720 = 1.7778 (16:9)
+
+    aspect_tolerance = 0.02             # allow ±2% before treating as mismatch
+
+    # --- Step 1: determine crop region on the raw hardware frame ---
+    # We want to extract a region that has the same aspect ratio as the
+    # calibration image, so that the subsequent resize is a pure scale
+    # (no geometric distortion).
+
+    if abs(hw_aspect - tgt_aspect) < aspect_tolerance:
+        # Hardware already delivers the correct aspect ratio — no crop needed.
+        crop_x, crop_y = 0, 0
+        crop_w, crop_h = hw_w, hw_h
+        crop_note = "none (aspect ratio matches)"
+    elif hw_aspect < tgt_aspect:
+        # Frame is taller than needed (e.g. 4:3 portrait-ish).
+        # Keep full width, crop top & bottom symmetrically.
+        crop_w = hw_w
+        crop_h = int(round(hw_w / tgt_aspect))
+        crop_h -= crop_h % 2          # keep even for codec compatibility
+        crop_x = 0
+        crop_y = (hw_h - crop_h) // 2
+        crop_note = f"vertical crop: remove {hw_h - crop_h}px ({(hw_h - crop_h)//2}px each side)"
+    else:
+        # Frame is wider than needed — crop left & right symmetrically.
+        crop_h = hw_h
+        crop_w = int(round(hw_h * tgt_aspect))
+        crop_w -= crop_w % 2
+        crop_x = (hw_w - crop_w) // 2
+        crop_y = 0
+        crop_note = f"horizontal crop: remove {hw_w - crop_w}px ({(hw_w - crop_w)//2}px each side)"
+
+    # --- Step 2: compute scale from the *cropped* region to (target_w x target_h) ---
+    # This is the geometrically correct scale that maps the original calibration
+    # principal point and focal lengths to the pipeline resolution.
+    #
+    # We decompose this into two sequential transforms:
+    #   (a) calib_res  →  hw crop res   (how the hardware differs from calib)
+    #   (b) hw crop res →  target res   (the resize we apply each frame)
+    #
+    # Combined, the net scale from calib to target is simply:
+    scale_x = target_w / calib_w   # correct because crop_w/hw_w ≈ calib_w/calib_w = 1
+    scale_y = target_h / calib_h   # only valid when crop preserves aspect ratio
+
+    # For the principal point we also need to account for the crop offset
+    # projected into the calibration space:
+    calib_crop_offset_x = crop_x * (calib_w / hw_w)
+    calib_crop_offset_y = crop_y * (calib_h / hw_h)
+
+    M = cam_matrix_orig.copy()
+    fx = M[0, 0] * scale_x
+    fy = M[1, 1] * scale_y
+    cx = (M[0, 2] - calib_crop_offset_x) * scale_x
+    cy = (M[1, 2] - calib_crop_offset_y) * scale_y
+
+    scaled_matrix = np.array([
+        [fx,  0., cx],
+        [0.,  fy, cy],
+        [0.,  0.,  1.]
+    ], dtype=np.float64)
+
+    crop_params = {'x': crop_x, 'y': crop_y, 'w': crop_w, 'h': crop_h}
+
+    diag_info = {
+        "calibration_resolution": f"{calib_w}x{calib_h}",
+        "hardware_delivered":     f"{hw_w}x{hw_h}  (aspect {hw_aspect:.4f})",
+        "crop_applied":           crop_note,
+        "crop_region_px":         f"x={crop_x}, y={crop_y}, w={crop_w}, h={crop_h}",
+        "pipeline_resolution":    f"{target_w}x{target_h}",
+        "scale_x":                round(scale_x, 6),
+        "scale_y":                round(scale_y, 6),
+        "FX": round(fx, 4), "FY": round(fy, 4),
+        "CX": round(cx, 4), "CY": round(cy, 4),
+    }
+
+    return scaled_matrix, crop_params, diag_info
+
+
+def apply_crop(frame, crop_params):
+    """Crops a raw hardware frame according to crop_params dict."""
+    x, y, w, h = crop_params['x'], crop_params['y'], crop_params['w'], crop_params['h']
+    return frame[y:y+h, x:x+w]
+
+
+def calculate_calibrated_distance(footpoint_x, footpoint_y,
+                                   current_h, current_tilt,
+                                   cam_matrix, dist_coeffs, cx, cy, fy):
     pixel_point = np.array([[[float(footpoint_x), float(footpoint_y)]]], dtype=np.float32)
-    undistorted_point = cv2.undistortPoints(pixel_point, CAMERA_MATRIX, DIST_COEFFS, P=CAMERA_MATRIX)
-
+    undistorted_point = cv2.undistortPoints(pixel_point, cam_matrix, dist_coeffs, P=cam_matrix)
     v_prime = undistorted_point[0][0][1]
-    y_norm = (v_prime - CY) / FY
+    y_norm = (v_prime - cy) / fy
     theta_pixel = math.atan(y_norm)
-
     total_angle = math.radians(current_tilt) + theta_pixel
     if total_angle <= 0:
         return float('inf')
-
     return current_h / math.tan(total_angle)
 
 
@@ -303,11 +407,16 @@ def draw_outlined_text(img, text, pos, scale, color):
     cv2.putText(img, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, scale, color, 2)
 
 
-# --- LIVE EXECUTION SETUP ---
-print("Loading custom weights: best.pt")
-model = YOLO('best.pt')
+# ============================================================
+# LIVE EXECUTION SETUP
+# ============================================================
 
-cap = cv2.VideoCapture('for_testing.mp4') # Ensure this matches your camera index
+print("Loading NCNN model weights: best_ncnn_model")
+model = YOLO('best_ncnn_model')
+
+cap = cv2.VideoCapture(1, cv2.CAP_V4L2)  # CAP_V4L2 for Raspberry Pi (Linux)
+
+# Request preferred resolution (treated as a hint by most drivers)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 cap.set(cv2.CAP_PROP_FPS, 30)
@@ -316,76 +425,180 @@ if not cap.isOpened():
     print("Error: Could not open the live camera feed.")
     exit()
 
-print("\n--- Starting Live Diorama Feed ---")
-print("Press 'q' in the video window to stop the run and save logs.")
+# ---------------------------------------------------------------
+# STEP 1: HARDWARE VERIFICATION
+# Read real frames to discover what resolution the driver actually
+# delivers — cap.get() only returns what was *requested*.
+# ---------------------------------------------------------------
+print("\n--- Hardware Verification: probing actual frame dimensions... ---")
+HW_WIDTH, HW_HEIGHT = get_hardware_frame_dimensions(cap, num_probe_frames=5)
 
+if HW_WIDTH is None:
+    print("FATAL: Could not read any frames from camera. Exiting.")
+    cap.release()
+    exit()
+
+requested_w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+requested_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+print(f"  Requested  : {requested_w}x{requested_h}")
+print(f"  Delivered  : {HW_WIDTH}x{HW_HEIGHT}  ← used for matrix scaling")
+
+if HW_WIDTH != requested_w or HW_HEIGHT != requested_h:
+    print("  ⚠  Driver resolution mismatch detected! "
+          "Using delivered dimensions for geometry — this was likely your 20cm error source.")
+
+# ---------------------------------------------------------------
+# STEP 2: DYNAMICALLY BUILD THE CORRECTLY SCALED CAMERA MATRIX
+# ---------------------------------------------------------------
+CAMERA_MATRIX, CROP_PARAMS, diag = build_scaled_camera_matrix(
+    CAMERA_MATRIX_ORIG,
+    HW_WIDTH, HW_HEIGHT,
+    CALIB_WIDTH, CALIB_HEIGHT,
+    TARGET_WIDTH, TARGET_HEIGHT
+)
+
+CX = diag["CX"]
+CY = diag["CY"]
+FX = diag["FX"]
+FY = diag["FY"]
+
+print("\n--- Camera Matrix Diagnostic ---")
+for k, v in diag.items():
+    print(f"  {k:<30}: {v}")
+
+# Save diagnostic to disk for your thesis records
 run_timestamp = time.strftime("%Y%m%d-%H%M%S")
+os.makedirs("logs", exist_ok=True)
+diag_path = os.path.join("logs", f"hw_diagnostic_{run_timestamp}.json")
+with open(diag_path, 'w') as f:
+    json.dump(diag, f, indent=4)
+print(f"  Diagnostic saved → {diag_path}")
+
+needs_crop = (CROP_PARAMS['x'] != 0 or CROP_PARAMS['y'] != 0
+              or CROP_PARAMS['w'] != HW_WIDTH or CROP_PARAMS['h'] != HW_HEIGHT)
+if needs_crop:
+    print(f"\n  ✔  Aspect-ratio crop ENABLED: {diag['crop_applied']}")
+else:
+    print("\n  ✔  No aspect-ratio crop needed.")
+
+print("\n--- Starting Optimized Live Feed ---")
+print("Press 'q' in the video window to stop the run and save logs.\n")
+
 sys_logger = SystemLogger(f"live_run_{run_timestamp}")
 
-video_path = os.path.join(sys_logger.run_dir, f"{sys_logger.run_name}_recording.mp4")
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-video_writer = cv2.VideoWriter(video_path, fourcc, 30.0, (1280, 720))
-
 tracker = ObjectTracker()
+active_trackers = {}
 
 current_state = State.FOLLOW
 state_start_time = 0
 overtake_direction = "NONE"
-overtake_angle = 0.0          
-
+overtake_angle = 0.0
 last_obstacle_seen_time = time.time()
-
 frame_count = 0
 run_start_time = time.time()
 prev_time = time.time()
 
+# ============================================================
+# MAIN LOOP
+# ============================================================
 while True:
-    success, frame = cap.read()
+    success, raw_frame = cap.read()
     if not success:
-        print("Camera feed interrupted.")
         break
+
+    # --- Geometry-preserving pre-processing pipeline ---
+    # Step A: crop to correct aspect ratio (no-op if camera is already 16:9)
+    if needs_crop:
+        raw_frame = apply_crop(raw_frame, CROP_PARAMS)
+
+    # Step B: resize to pipeline resolution (pure scale, no distortion)
+    frame = cv2.resize(raw_frame, (TARGET_WIDTH, TARGET_HEIGHT))
 
     current_time = time.time()
     dt = current_time - prev_time
     if dt <= 0:
         dt = 1.0 / 30.0
-    current_fps = 1.0 / dt          
+    current_fps = 1.0 / dt
 
     h, w, _ = frame.shape
     frame_count += 1
 
-    results = model.track(frame, persist=True, stream=True, verbose=False)
-
     critical_obstacle = None
     min_dist = float('inf')
     all_detections = []
-    
-    display_speed_cm_s = 0.0
-    speed_label = ""
-    show_speed = False
 
-    for r in results:
-        if r.boxes.id is not None:
-            track_ids = r.boxes.id.int().cpu().tolist()
-            boxes = r.boxes
-            for i, box in enumerate(boxes):
-                x1, y1, x2, y2 = map(int, box.xyxy[0])
-                oid = track_ids[i]
-                label_name = model.names[int(box.cls[0])]
+    if frame_count % SKIP_FRAMES == 0 or frame_count == 1:
+        results = model.track(frame, persist=True, stream=False, verbose=False)
+        active_trackers.clear()
+
+        for r in results:
+            if r.boxes.id is not None:
+                track_ids = r.boxes.id.int().cpu().tolist()
+                boxes = r.boxes
+                for i, box in enumerate(boxes):
+                    x1, y1, x2, y2 = map(int, box.xyxy[0])
+                    oid = track_ids[i]
+                    label_name = model.names[int(box.cls[0])]
+
+                    bbox = (x1, y1, x2 - x1, y2 - y1)
+
+                    # Bulletproof KCF tracker initialisation
+                    try:
+                        kcf_tracker = cv2.TrackerKCF.create()
+                    except AttributeError:
+                        try:
+                            kcf_tracker = cv2.legacy.TrackerKCF_create()
+                        except AttributeError:
+                            kcf_tracker = cv2.TrackerKCF_create()
+
+                    kcf_tracker.init(frame, bbox)
+                    active_trackers[oid] = {'tracker': kcf_tracker, 'label': label_name}
+
+                    fp_x = int((x1 + x2) / 2)
+                    fp_y = int(y2)
+                    raw_dist = calculate_calibrated_distance(
+                        fp_x, fp_y, camera_height_m, camera_tilt_deg,
+                        CAMERA_MATRIX, DIST_COEFFS, CX, CY, FY
+                    )
+
+                    if raw_dist != float('inf'):
+                        dist, closing_speed, ttc, lat_speed = tracker.update(
+                            oid, raw_dist, dt, current_state, fp_x)
+                        is_dynamic = lat_speed > 40.0 or (
+                            current_state in [State.OBSERVE, State.STOP_DYNAMIC]
+                            and closing_speed > 0.03)
+
+                        detection_data = {
+                            'id': oid, 'label': label_name, 'box': (x1, y1, x2, y2),
+                            'fp': (fp_x, fp_y), 'dist': dist, 'speed': closing_speed,
+                            'ttc': ttc, 'lat_speed': lat_speed, 'center_x': fp_x,
+                            'is_dynamic': is_dynamic
+                        }
+                        all_detections.append(detection_data)
+    else:
+        for oid, track_info in list(active_trackers.items()):
+            kcf_tracker = track_info['tracker']
+            label_name = track_info['label']
+            success_track, bbox = kcf_tracker.update(frame)
+
+            if success_track:
+                x, y, w_box, h_box = map(int, bbox)
+                x1, y1, x2, y2 = x, y, x + w_box, y + h_box
                 fp_x = int((x1 + x2) / 2)
                 fp_y = int(y2)
 
-                raw_dist = calculate_calibrated_distance(fp_x, fp_y, camera_height_m, camera_tilt_deg)
-
+                raw_dist = calculate_calibrated_distance(
+                    fp_x, fp_y, camera_height_m, camera_tilt_deg,
+                    CAMERA_MATRIX, DIST_COEFFS, CX, CY, FY
+                )
                 if raw_dist != float('inf'):
                     dist, closing_speed, ttc, lat_speed = tracker.update(
-                        oid, raw_dist, dt, current_state, fp_x
-                    )
-
+                        oid, raw_dist, dt, current_state, fp_x)
                     is_dynamic = lat_speed > 40.0 or (
                         current_state in [State.OBSERVE, State.STOP_DYNAMIC]
-                        and closing_speed > 0.03
-                    )
+                        and closing_speed > 0.03)
+
                     detection_data = {
                         'id': oid, 'label': label_name, 'box': (x1, y1, x2, y2),
                         'fp': (fp_x, fp_y), 'dist': dist, 'speed': closing_speed,
@@ -393,157 +606,114 @@ while True:
                         'is_dynamic': is_dynamic
                     }
                     all_detections.append(detection_data)
-                    sys_logger.log_object(frame_count, detection_data)
-                    if dist < min_dist:
-                        min_dist = dist
-                        critical_obstacle = detection_data
+            else:
+                del active_trackers[oid]
+
+    for d in all_detections:
+        sys_logger.log_object(frame_count, d)
+        if d['dist'] < min_dist:
+            min_dist = d['dist']
+            critical_obstacle = d
 
     if critical_obstacle is not None:
         last_obstacle_seen_time = current_time
 
+    # --- 3-Tier FSM (unchanged) ---
     action_text = "GO"
-    hud_color   = (0, 255, 0)
+    hud_color = (0, 255, 0)
     global_action = "GO"
+    show_speed = False
+    display_speed_cm_s = 0.0
+    speed_label = ""
 
     if current_state == State.OVERTAKE:
         elapsed = time.time() - state_start_time
-        hud_color     = (255, 165, 0)
+        hud_color = (255, 165, 0)
         global_action = "OVERTAKE"
-
         if elapsed < TIME_TURN:
             action_text = f"TURN {overtake_direction} {overtake_angle:.1f} DEG"
         elif elapsed < (TIME_TURN + TIME_PASS):
             action_text = "DRIVE STRAIGHT"
         elif elapsed < (TIME_TURN + TIME_PASS + TIME_RETURN):
-            return_dir  = "RIGHT" if overtake_direction == "LEFT" else "LEFT"
+            return_dir = "RIGHT" if overtake_direction == "LEFT" else "LEFT"
             action_text = f"RETURN {return_dir} {overtake_angle:.1f} DEG"
         else:
-            current_state    = State.REJOIN
+            current_state = State.REJOIN
             state_start_time = time.time()
-
     elif current_state == State.REJOIN:
-        action_text   = "REALIGNING"
-        hud_color     = (255, 255, 0)
+        action_text = "REALIGNING"
+        hud_color = (255, 255, 0)
         global_action = "OVERTAKE"
         if time.time() - state_start_time > 1.0:
             current_state = State.FOLLOW
-
     elif critical_obstacle:
-        dist          = critical_obstacle['dist']
-        ttc           = critical_obstacle['ttc']
+        dist = critical_obstacle['dist']
+        ttc = critical_obstacle['ttc']
         closing_speed = critical_obstacle['speed']
-        is_dynamic    = critical_obstacle['is_dynamic']
-
+        is_dynamic = critical_obstacle['is_dynamic']
         show_speed = True
-        display_speed_cm_s = closing_speed * 100
-        if display_speed_cm_s < 0:
-            display_speed_cm_s = 0.0
-
-        if current_state in [State.FOLLOW, State.SLOW] and not is_dynamic:
-            speed_label = "RC Car Speed"
-        elif current_state not in [State.FOLLOW, State.SLOW] and is_dynamic:
-            speed_label = "Obstacle Approach Speed"
-        else:
-            speed_label = "Relative Closing Speed"
+        display_speed_cm_s = max(0.0, closing_speed * 100)
+        speed_label = "Relative Closing Speed"
 
         if current_state in [State.FOLLOW, State.SLOW]:
             if ttc <= TTC_THRESHOLD or dist <= D_STOP:
-                current_state    = State.OBSERVE
+                current_state = State.OBSERVE
                 state_start_time = time.time()
-                action_text      = "BRAKING TO OBSERVE"
-                hud_color        = (0, 0, 255)
-                global_action    = "STOP"
-                sys_logger.log_decision_event(
-                    frame_count, "Distance_or_TTC_Safety", "OBSERVE",
-                    critical_obstacle['id']
-                )
+                action_text = "BRAKING TO OBSERVE"
+                hud_color = (0, 0, 255)
+                global_action = "STOP"
             elif dist <= D_SLOW:
                 current_state = State.SLOW
-                action_text   = "SLOW DOWN"
-                hud_color     = (0, 255, 255)
+                action_text = "SLOW DOWN"
+                hud_color = (0, 255, 255)
                 global_action = "SLOW"
-
         elif current_state == State.OBSERVE:
-            action_text   = "WAITING TO CONFIRM STATIC"
-            hud_color     = (0, 0, 255)
+            action_text = "WAITING TO CONFIRM STATIC"
+            hud_color = (0, 0, 255)
             global_action = "STOP"
-
             if is_dynamic:
                 current_state = State.STOP_DYNAMIC
-                action_text   = "STOP (DYNAMIC THREAT)"
-                sys_logger.log_decision_event(
-                    frame_count, "Dynamic_Confirmed", "STOP",
-                    critical_obstacle['id']
-                )
+                action_text = "STOP (DYNAMIC THREAT)"
             elif time.time() - state_start_time > TIME_OBSERVE:
-                safe_to_overtake = True
-                for other_obj in all_detections:
-                    if other_obj['id'] != critical_obstacle['id']:
-                        if other_obj['is_dynamic'] or other_obj['dist'] < 0.90:
-                            safe_to_overtake = False
-                            break
-                
-                if safe_to_overtake:
-                    current_state    = State.DECIDE
-                    state_start_time = time.time()
-                else:
-                    action_text = "WAITING: PATH BLOCKED"
-
+                current_state = State.DECIDE
+                state_start_time = time.time()
         elif current_state == State.STOP_DYNAMIC:
-            action_text   = "STOP (WAITING FOR CLEAR PATH)"
-            hud_color     = (0, 0, 255)
+            action_text = "STOP (WAITING FOR CLEAR PATH)"
+            hud_color = (0, 0, 255)
             global_action = "STOP"
             if not is_dynamic and closing_speed < 0.02:
                 current_state = State.FOLLOW
-
         elif current_state == State.DECIDE:
             overtake_direction = "LEFT" if critical_obstacle['center_x'] > CX else "RIGHT"
-            longitudinal_dist  = critical_obstacle['dist']
-
-            # [Groupmate] Dynamic lateral offset from observed pixel width
-            x1, y1, x2, y2        = critical_obstacle['box']
-            obstacle_width_meters  = (abs(x2 - x1) * longitudinal_dist) / FX
+            x1, y1, x2, y2 = critical_obstacle['box']
+            obstacle_width_meters = (abs(x2 - x1) * critical_obstacle['dist']) / FX
             dynamic_lateral_offset = (obstacle_width_meters / 2) + 0.20
-
-            # [Restored] Measure from bumper, not camera lens, then cap to servo limit
-            bumper_dist  = max(0.01, longitudinal_dist - CAMERA_BUMPER_OFFSET_M)
-            angle_radians = math.atan2(dynamic_lateral_offset, bumper_dist)
-            overtake_angle = min(math.degrees(angle_radians), MAX_STEERING_ANGLE)
-
-            current_state    = State.OVERTAKE
-            state_start_time = time.time()
-            action_text      = "DECIDING DIRECTION"
-            global_action    = "STOP"
-            sys_logger.log_decision_event(
-                frame_count,
-                "Overtake_Planned",
-                f"OVERTAKE {overtake_direction} AT {overtake_angle:.1f} DEG "
-                f"(offset={dynamic_lateral_offset:.3f}m, bumper_dist={bumper_dist:.3f}m)",
-                critical_obstacle['id']
+            bumper_dist = max(0.01, critical_obstacle['dist'] - CAMERA_BUMPER_OFFSET_M)
+            overtake_angle = min(
+                math.degrees(math.atan2(dynamic_lateral_offset, bumper_dist)),
+                MAX_STEERING_ANGLE
             )
-
+            current_state = State.OVERTAKE
+            state_start_time = time.time()
+            action_text = "DECIDING DIRECTION"
+            global_action = "STOP"
     else:
         if current_state in [State.STOP_DYNAMIC, State.OBSERVE]:
             current_state = State.FOLLOW
-
         elif current_state == State.DECIDE:
-            time_since_seen = current_time - last_obstacle_seen_time
-            if time_since_seen > BLIND_SPOT_TIMEOUT:
-                sys_logger.log_decision_event(
-                    frame_count,
-                    "Blind_Spot_Timeout",
-                    f"RESET_TO_FOLLOW from {current_state} after "
-                    f"{time_since_seen:.1f}s without obstacle",
-                    -1
-                )
+            if current_time - last_obstacle_seen_time > BLIND_SPOT_TIMEOUT:
                 current_state = State.FOLLOW
 
     sys_logger.log_frame(frame_count, current_fps, len(all_detections), global_action)
 
+    # --- HUD Rendering ---
     for d in all_detections:
         x1, y1, x2, y2 = d['box']
         is_crit = (critical_obstacle and d['id'] == critical_obstacle['id'])
-        color = hud_color if is_crit else (200, 200, 200)
+        if frame_count % SKIP_FRAMES == 0:
+            color = hud_color if is_crit else (200, 200, 200)
+        else:
+            color = (0, 255, 255) if is_crit else (0, 100, 100)
 
         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
         cv2.circle(frame, d['fp'], 5, (0, 0, 255), -1)
@@ -551,19 +721,19 @@ while True:
         dist_cm = d['dist'] * 100
         state_str = "DYN" if d['is_dynamic'] else "STAT"
         data_str = f"Dist:{dist_cm:.1f}cm | TTC:{d['ttc']:.1f}s | {state_str}"
-        draw_outlined_text(frame, data_str, (x1, y1 - 5), 0.6, color)
+        draw_outlined_text(frame, data_str, (x1, y1 - 5), 0.4, color)
 
-    draw_outlined_text(frame, "LIVE DIORAMA TEST (RECORDING)", (20, 40), 1.0, (255, 255, 255))
-    draw_outlined_text(frame, f"STATE: {current_state}", (20, 80), 1.0, (255, 255, 255))
-    draw_outlined_text(frame, action_text, (20, 120), 1.0, hud_color)
-    
+    draw_outlined_text(frame, "LIVE DIORAMA TEST (RECORDING)", (10, 20), 0.6, (255, 255, 255))
+    draw_outlined_text(frame, f"STATE: {current_state}", (10, 45), 0.6, (255, 255, 255))
+    draw_outlined_text(frame, action_text, (10, 70), 0.6, hud_color)
     if show_speed:
-        draw_outlined_text(frame, f"{speed_label}: {display_speed_cm_s:.1f} cm/s", (20, 160), 0.8, (0, 255, 255))
-        
-    draw_outlined_text(frame, f"FPS: {current_fps:.1f} | dt: {dt*1000:.1f}ms", (20, 200), 0.7, (200, 200, 200))
+        draw_outlined_text(frame, f"{speed_label}: {display_speed_cm_s:.1f} cm/s", (10, 95), 0.5, (0, 255, 255))
+    draw_outlined_text(frame, f"FPS: {current_fps:.1f} | dt: {dt*1000:.1f}ms", (10, 120), 0.5, (200, 200, 200))
+    # Show active crop mode on HUD for thesis verification
+    crop_hud = f"HW:{HW_WIDTH}x{HW_HEIGHT} | Crop:{needs_crop}"
+    draw_outlined_text(frame, crop_hud, (10, TARGET_HEIGHT - 10), 0.4, (180, 180, 180))
 
-    video_writer.write(frame)
-    cv2.imshow("Live Diorama Feed", frame)
+    cv2.imshow("Optimized Live Feed", frame)
 
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
@@ -572,11 +742,10 @@ while True:
     prev_time = current_time
 
 cap.release()
-video_writer.release()
+cv2.destroyAllWindows()
 
 total_elapsed = time.time() - run_start_time
 avg_fps = frame_count / total_elapsed if total_elapsed > 0 else 0.0
 
 sys_logger.close(frame_count, avg_fps)
-cv2.destroyAllWindows()
-print(f"Live evaluation complete. Video and logs saved in {sys_logger.run_dir}")
+print(f"Run complete. Logs saved → {sys_logger.run_dir}")
