@@ -178,7 +178,7 @@ class SystemLogger:
         with open(os.path.join(self.run_dir, f"{self.run_name}_clip_summary.json"), 'w') as f:
             json.dump(summary, f, indent=4)
 
-        # --- FULL EVALUATION REPORT METRICS ---
+        # --- FULL EVALUATION REPORT METRICS (RESTORED) ---
         report = {
             "run_name": self.run_name,
             "total_frames": total_frames,
@@ -280,26 +280,22 @@ def draw_outlined_text(img, text, pos, scale, color):
     cv2.putText(img, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, scale, color, 2)
 
 # --- LIVE EXECUTION SETUP ---
-print("Loading highly-optimized NCNN model for Raspberry Pi...")
-# [OPTIMIZATION] Load the NCNN model exported earlier
-model = YOLO('best_ncnn_model') 
+print("Loading custom weights: best.pt")
+model = YOLO('best.pt') 
 
-# [OPTIMIZATION] Read from the live USB Camera (usually index 0 on a Pi)
-cap = cv2.VideoCapture(0) 
+cap = cv2.VideoCapture('for_testing.mp4') 
 if not cap.isOpened():
-    print("Error: Could not open the physical camera feed. Check your USB connection!")
+    print("Error: Could not open the live camera feed.")
     exit()
 
-print("\n--- Starting Optimized Ubuntu Live Feed ---")
+print("\n--- Starting Optimized Test Feed ---")
 print("Press 'q' in the video window to stop the run and save logs.")
 
 run_timestamp = time.strftime("%Y%m%d-%H%M%S")
 sys_logger = SystemLogger(f"live_run_{run_timestamp}")
 
-# [OPTIMIZATION] Save the live video feed straight into the Pi's rapid RAM partition (/dev/shm)
-ram_video_path = f"/dev/shm/{sys_logger.run_name}_recording.mp4"
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-video_writer = cv2.VideoWriter(ram_video_path, fourcc, 30.0, (TARGET_WIDTH, TARGET_HEIGHT))
+frames_in_ram = [] 
+video_path = os.path.join(sys_logger.run_dir, f"{sys_logger.run_name}_recording.mp4")
 
 tracker = ObjectTracker()
 active_trackers = {} 
@@ -348,6 +344,7 @@ while True:
                     
                     bbox = (x1, y1, x2 - x1, y2 - y1)
                     
+                    # [BULLETPROOF TRACKER INITIALIZATION]
                     try:
                         kcf_tracker = cv2.TrackerKCF.create()
                     except AttributeError:
@@ -510,15 +507,14 @@ while True:
         data_str = f"Dist:{dist_cm:.1f}cm | TTC:{d['ttc']:.1f}s | {state_str}"
         draw_outlined_text(frame, data_str, (x1, y1 - 5), 0.4, color) 
 
-    draw_outlined_text(frame, "LIVE DIORAMA TEST (UBUNTU)", (10, 20), 0.6, (255, 255, 255))
+    draw_outlined_text(frame, "LIVE DIORAMA TEST (RECORDING)", (10, 20), 0.6, (255, 255, 255))
     draw_outlined_text(frame, f"STATE: {current_state}", (10, 45), 0.6, (255, 255, 255))
     draw_outlined_text(frame, action_text, (10, 70), 0.6, hud_color)
     if show_speed:
         draw_outlined_text(frame, f"{speed_label}: {display_speed_cm_s:.1f} cm/s", (10, 95), 0.5, (0, 255, 255))
     draw_outlined_text(frame, f"FPS: {current_fps:.1f} | dt: {dt*1000:.1f}ms", (10, 120), 0.5, (200, 200, 200))
 
-    # Write directly to RAM file instead of a Python array
-    video_writer.write(frame)
+    frames_in_ram.append(frame.copy())
     cv2.imshow("Optimized Feed Test", frame)
 
     key = cv2.waitKey(1) & 0xFF
@@ -527,17 +523,20 @@ while True:
 
     prev_time = current_time
 
-# Teardown logic
 cap.release()
-video_writer.release()
 cv2.destroyAllWindows()
 
-print(f"\nRun finished. The video has been saved temporarily to the Pi's RAM.")
-print(f"You can manually copy it from this location: {ram_video_path}")
-print("NOTE: Make sure to copy it to your SD card before turning off the Pi, as RAM is wiped on shutdown.")
+print(f"\nRun finished. Writing {len(frames_in_ram)} frames from RAM to Hard Drive...")
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+video_writer = cv2.VideoWriter(video_path, fourcc, 30.0, (TARGET_WIDTH, TARGET_HEIGHT))
+
+for f in frames_in_ram:
+    video_writer.write(f)
+    
+video_writer.release()
 
 total_elapsed = time.time() - run_start_time
 avg_fps = frame_count / total_elapsed if total_elapsed > 0 else 0.0
 
 sys_logger.close(frame_count, avg_fps)
-print("Log files generated successfully.")
+print(f"Video saved to {video_path}!")
