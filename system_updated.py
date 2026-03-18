@@ -109,7 +109,8 @@ class KalmanFilter1D:
         P_pred = A @ self.P @ A.T + self.Q
         innov  = measurement - self.H @ x_pred
         S      = self.H @ P_pred @ self.H.T + self.R
-        K      = P_pred @ self.H.T @ np.linalg.inv(S)
+        # S is always 1×1 here — scalar reciprocal avoids full LAPACK inv()
+        K      = P_pred @ self.H.T * (1.0 / float(S[0, 0]))
         self.x = x_pred + K @ innov
         self.P = P_pred - K @ self.H @ P_pred
         return float(self.x[0][0]), float(self.x[1][0])
@@ -437,14 +438,14 @@ def draw_outlined_text(img, text, pos, scale, color):
 # STARTUP
 # =============================================================
 print("Loading NCNN model: best_ncnn_model")
-model = YOLO('/home/avrobots/Downloads/ObjectDetection/AV-Robots-Distance_Detection/best_ncnn_model')
+model = YOLO('best_ncnn_model')
 
-STREAM_URL = "http://10.200.1.123:8080/?action=stream"
-cap = cv2.VideoCapture(STREAM_URL)   # V4L2 = Linux/Pi only
-cap.set(cv2.CAP_PROP_FRAME_WIDTH,  1280)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-cap.set(cv2.CAP_PROP_FPS,          30)
-cap.set(cv2.CAP_PROP_BUFFERSIZE,   1)      # Prevents stale-frame drain
+STREAM_URL = "http://<raspberry-pi-ip>:8080/?action=stream"
+cap = cv2.VideoCapture(STREAM_URL)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH,  1280)  # Ignored by MJPEG stream; set on Pi side
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)   # Ignored by MJPEG stream; set on Pi side
+cap.set(cv2.CAP_PROP_FPS,          30)    # Ignored by MJPEG stream; set on Pi side
+cap.set(cv2.CAP_PROP_BUFFERSIZE,   1)     # Prevents stale-frame drain
 
 if not cap.isOpened():
     print("Error: Could not open camera.")
@@ -532,7 +533,7 @@ while True:
     # DETECTION — YOLO or KCF depending on SKIP_FRAMES
     # ----------------------------------------------------------
     if frame_count % SKIP_FRAMES == 0 or frame_count == 1:
-        results = model.track(frame, persist=True, stream=False, verbose=False)
+        results = model.track(frame, persist=True, stream=True, verbose=False)
         active_trackers.clear()
 
         for r in results:
@@ -545,15 +546,20 @@ while True:
                 label_name = model.names[int(box.cls[0])]
                 bbox       = (x1, y1, x2 - x1, y2 - y1)
 
-                try:
-                    kcf = cv2.TrackerKCF.create()
-                except AttributeError:
+                # KCF GUARD — only pay the init cost when KCF frames will
+                # actually occur (SKIP_FRAMES > 1).  At SKIP_FRAMES = 1 the
+                # else-branch never runs, so building and storing a tracker
+                # every YOLO frame was pure wasted CPU.
+                if SKIP_FRAMES > 1:
                     try:
-                        kcf = cv2.legacy.TrackerKCF_create()
+                        kcf = cv2.TrackerKCF.create()
                     except AttributeError:
-                        kcf = cv2.TrackerKCF_create()
-                kcf.init(frame, bbox)
-                active_trackers[oid] = {'tracker': kcf, 'label': label_name}
+                        try:
+                            kcf = cv2.legacy.TrackerKCF_create()
+                        except AttributeError:
+                            kcf = cv2.TrackerKCF_create()
+                    kcf.init(frame, bbox)
+                    active_trackers[oid] = {'tracker': kcf, 'label': label_name}
 
                 fp_x = int((x1 + x2) / 2);  fp_y = int(y2)
                 raw_dist = calculate_calibrated_distance(
