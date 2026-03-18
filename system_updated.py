@@ -440,12 +440,11 @@ def draw_outlined_text(img, text, pos, scale, color):
 print("Loading NCNN model: best_ncnn_model")
 model = YOLO('best_ncnn_model')
 
-STREAM_URL = "http://<raspberry-pi-ip>:8080/?action=stream"
-cap = cv2.VideoCapture(STREAM_URL)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH,  1280)  # Ignored by MJPEG stream; set on Pi side
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)   # Ignored by MJPEG stream; set on Pi side
-cap.set(cv2.CAP_PROP_FPS,          30)    # Ignored by MJPEG stream; set on Pi side
-cap.set(cv2.CAP_PROP_BUFFERSIZE,   1)     # Prevents stale-frame drain
+cap = cv2.VideoCapture(1, cv2.CAP_V4L2)   # V4L2 = Linux/Pi only , dapat 1, cv2.CAP_V4L2
+cap.set(cv2.CAP_PROP_FRAME_WIDTH,  1280)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+cap.set(cv2.CAP_PROP_FPS,          30)
+cap.set(cv2.CAP_PROP_BUFFERSIZE,   1)      # Prevents stale-frame drain
 
 if not cap.isOpened():
     print("Error: Could not open camera.")
