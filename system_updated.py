@@ -8,6 +8,11 @@ import json
 from collections import deque
 from ultralytics import YOLO
 
+# === ROS1 INTEGRATION START — imports ===
+import rospy
+from std_msgs.msg import String
+# === ROS1 INTEGRATION END — imports ===
+
 # =============================================================
 # OPTIMIZATION CONFIGURATION
 # =============================================================
@@ -440,7 +445,7 @@ def draw_outlined_text(img, text, pos, scale, color):
 print("Loading NCNN model: best_ncnn_model")
 model = YOLO('best_ncnn_model')
 
-cap = cv2.VideoCapture(1, cv2.CAP_V4L2)   # V4L2 = Linux/Pi only , dapat 1, cv2.CAP_V4L2
+cap = cv2.VideoCapture(1, cv2.CAP_V4L2)   # V4L2 = Linux/Pi only
 cap.set(cv2.CAP_PROP_FRAME_WIDTH,  1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 cap.set(cv2.CAP_PROP_FPS,          30)
@@ -490,6 +495,20 @@ print(f"  D_STOP={D_STOP}m | D_SLOW={D_SLOW}m | D_SECONDARY_BLOCK={D_SECONDARY_B
 print(f"  STATIC_CONFIRM_FRAMES={STATIC_CONFIRM_FRAMES}")
 print("  Press 'q' to stop.\n")
 
+# === ROS1 INTEGRATION START — node initialisation & publisher ===
+# anonymous=True allows multiple instances to run simultaneously without
+# name collisions (useful during thesis testing).
+rospy.init_node('obstacle_detection_node', anonymous=True)
+
+# Publisher: latches the last message so any late-subscribing node
+# (e.g. Pure Pursuit) immediately receives the current command on connect.
+obstacle_pub = rospy.Publisher('/obstacle_cmd', String, queue_size=1, latch=True)
+
+# Publish an initial GO so Pure Pursuit doesn't wait for the first detection.
+obstacle_pub.publish(String(data="GO"))
+rospy.loginfo("obstacle_detection_node started — publishing on /obstacle_cmd")
+# === ROS1 INTEGRATION END — node initialisation & publisher ===
+
 # =============================================================
 # RUNTIME STATE
 # =============================================================
@@ -509,7 +528,8 @@ prev_time               = time.time()
 # =============================================================
 # MAIN LOOP
 # =============================================================
-while True:
+# === ROS1 INTEGRATION: loop exits cleanly on rosnode kill / Ctrl-C ===
+while not rospy.is_shutdown():
     success, raw_frame = cap.read()
     if not success:
         break
@@ -772,6 +792,22 @@ while True:
                 current_state = State.FOLLOW
 
     sys_logger.log_frame(frame_count, current_fps, len(all_detections), global_action)
+
+    # === ROS1 INTEGRATION START — publish obstacle command ===
+    # Map the FSM's four possible global_action values down to the three
+    # outputs the Pure Pursuit node understands.
+    #   "GO"       → "GO"   (clear path, following)
+    #   "SLOW"     → "SLOW" (obstacle detected but not critical)
+    #   "STOP"     → "STOP" (braking, observing, or blocked)
+    #   "OVERTAKE" → "GO"   (manoeuvre in progress, car is moving)
+    #   anything else / undefined → "GO"  (safe default)
+    _action_to_ros = {"GO": "GO", "SLOW": "SLOW", "STOP": "STOP", "OVERTAKE": "GO"}
+    ros_cmd = _action_to_ros.get(global_action, "GO")
+    # pub.publish() is non-blocking — it queues the message and returns in
+    # microseconds.  DO NOT add rate.sleep() here; the loop is already
+    # naturally paced by YOLO inference and camera capture.
+    obstacle_pub.publish(String(data=ros_cmd))
+    # === ROS1 INTEGRATION END — publish obstacle command ===
 
     # ----------------------------------------------------------
     # HUD
