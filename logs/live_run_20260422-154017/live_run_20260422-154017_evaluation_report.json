@@ -1,0 +1,94 @@
+{
+    "run_name": "live_run_20260422-154017",
+    "total_frames": 1619,
+    "average_fps": 13.03,
+    "ground_truth_m": 0.5,
+    "distance_accuracy": {
+        "primary_track_id": 24,
+        "candidates_after_filter": 7,
+        "tracks_rejected": 7,
+        "sample_count": 729,
+        "mean_dist_m": 0.5327,
+        "std_dist_m": 0.0843,
+        "MAE_m": 0.0864,
+        "RMSE_m": 0.0904,
+        "p95_error_m": 0.1476
+    },
+    "temporal_stability": {
+        "per_track": {
+            "1": {
+                "lifespan_frames": 653,
+                "ftf_variance_m2": 6e-06,
+                "ftf_std_m": 0.002499
+            },
+            "2": {
+                "lifespan_frames": 51,
+                "ftf_variance_m2": 6.9e-05,
+                "ftf_std_m": 0.008335
+            },
+            "3": {
+                "lifespan_frames": 14,
+                "ftf_variance_m2": 0.000309,
+                "ftf_std_m": 0.017576
+            },
+            "5": {
+                "lifespan_frames": 35,
+                "ftf_variance_m2": 9e-05,
+                "ftf_std_m": 0.009512
+            },
+            "7": {
+                "lifespan_frames": 412,
+                "ftf_variance_m2": 4.6e-05,
+                "ftf_std_m": 0.006807
+            },
+            "11": {
+                "lifespan_frames": 1,
+                "ftf_variance_m2": null,
+                "ftf_std_m": null
+            },
+            "13": {
+                "lifespan_frames": 1,
+                "ftf_variance_m2": null,
+                "ftf_std_m": null
+            },
+            "17": {
+                "lifespan_frames": 7,
+                "ftf_variance_m2": 0.000213,
+                "ftf_std_m": 0.014597
+            },
+            "21": {
+                "lifespan_frames": 94,
+                "ftf_variance_m2": 1.8e-05,
+                "ftf_std_m": 0.004299
+            },
+            "24": {
+                "lifespan_frames": 729,
+                "ftf_variance_m2": 1.6e-05,
+                "ftf_std_m": 0.003947
+            },
+            "27": {
+                "lifespan_frames": 45,
+                "ftf_variance_m2": 0.000173,
+                "ftf_std_m": 0.013138
+            },
+            "32": {
+                "lifespan_frames": 261,
+                "ftf_variance_m2": 3.3e-05,
+                "ftf_std_m": 0.005758
+            },
+            "41": {
+                "lifespan_frames": 12,
+                "ftf_variance_m2": 0.00047,
+                "ftf_std_m": 0.021675
+            },
+            "45": {
+                "lifespan_frames": 1,
+                "ftf_variance_m2": null,
+                "ftf_std_m": null
+            }
+        },
+        "total_unique_track_ids": 14,
+        "mean_track_lifespan_frames": 165.43,
+        "mean_ftf_variance_m2": 0.000131
+    }
+}

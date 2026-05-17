@@ -1,0 +1,57 @@
+{
+    "run_name": "live_run_20260418-105525",
+    "total_frames": 1606,
+    "average_fps": 18.68,
+    "ground_truth_m": 0.5,
+    "distance_accuracy": {
+        "error": "no_plausible_track_found",
+        "max_reliable_dist_m": 0.85,
+        "plausibility_band_m": 0.4,
+        "ground_truth_m": 0.5,
+        "track_mean_dists": {
+            "1": 1.5059,
+            "3": 1.5117,
+            "5": 1.3974,
+            "10": 2.1047,
+            "14": 1.8165,
+            "27": 1.8081
+        }
+    },
+    "temporal_stability": {
+        "per_track": {
+            "1": {
+                "lifespan_frames": 64,
+                "ftf_variance_m2": 3e-06,
+                "ftf_std_m": 0.001853
+            },
+            "3": {
+                "lifespan_frames": 145,
+                "ftf_variance_m2": 1.4e-05,
+                "ftf_std_m": 0.003694
+            },
+            "5": {
+                "lifespan_frames": 1388,
+                "ftf_variance_m2": 1.7e-05,
+                "ftf_std_m": 0.004151
+            },
+            "10": {
+                "lifespan_frames": 60,
+                "ftf_variance_m2": 3.2e-05,
+                "ftf_std_m": 0.005653
+            },
+            "14": {
+                "lifespan_frames": 5,
+                "ftf_variance_m2": 3e-05,
+                "ftf_std_m": 0.005518
+            },
+            "27": {
+                "lifespan_frames": 80,
+                "ftf_variance_m2": 7e-06,
+                "ftf_std_m": 0.002737
+            }
+        },
+        "total_unique_track_ids": 6,
+        "mean_track_lifespan_frames": 290.33,
+        "mean_ftf_variance_m2": 1.7e-05
+    }
+}

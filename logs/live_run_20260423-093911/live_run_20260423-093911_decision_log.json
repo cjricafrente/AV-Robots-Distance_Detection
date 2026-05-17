@@ -1,0 +1,23 @@
+[
+    {
+        "time": 1776908366.7236226,
+        "frame": 193,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776908368.2390153,
+        "frame": 217,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776908368.3379192,
+        "frame": 218,
+        "trigger": "Overtake_Planned",
+        "action": "OVERTAKE RIGHT AT 36.2 DEG (lateral_offset=0.262m)",
+        "target_track_id": 1
+    }
+]

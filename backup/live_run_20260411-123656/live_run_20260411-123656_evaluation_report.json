@@ -1,0 +1,199 @@
+{
+    "run_name": "live_run_20260411-123656",
+    "total_frames": 5378,
+    "average_fps": 15.36,
+    "ground_truth_m": 0.5,
+    "distance_accuracy": {
+        "primary_track_id": 74,
+        "candidates_after_filter": 26,
+        "tracks_rejected": 9,
+        "sample_count": 1158,
+        "mean_dist_m": 0.8259,
+        "std_dist_m": 0.01,
+        "MAE_m": 0.3259,
+        "RMSE_m": 0.3261,
+        "p95_error_m": 0.3395
+    },
+    "temporal_stability": {
+        "per_track": {
+            "1": {
+                "lifespan_frames": 956,
+                "ftf_variance_m2": 1e-06,
+                "ftf_std_m": 0.001099
+            },
+            "7": {
+                "lifespan_frames": 172,
+                "ftf_variance_m2": 1.2e-05,
+                "ftf_std_m": 0.003463
+            },
+            "8": {
+                "lifespan_frames": 1,
+                "ftf_variance_m2": null,
+                "ftf_std_m": null
+            },
+            "14": {
+                "lifespan_frames": 25,
+                "ftf_variance_m2": 2e-06,
+                "ftf_std_m": 0.001505
+            },
+            "15": {
+                "lifespan_frames": 2,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.0
+            },
+            "17": {
+                "lifespan_frames": 3,
+                "ftf_variance_m2": 7e-06,
+                "ftf_std_m": 0.00261
+            },
+            "21": {
+                "lifespan_frames": 572,
+                "ftf_variance_m2": 1e-06,
+                "ftf_std_m": 0.000867
+            },
+            "22": {
+                "lifespan_frames": 12,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000424
+            },
+            "23": {
+                "lifespan_frames": 333,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000311
+            },
+            "26": {
+                "lifespan_frames": 679,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000274
+            },
+            "32": {
+                "lifespan_frames": 17,
+                "ftf_variance_m2": 0.00024,
+                "ftf_std_m": 0.015476
+            },
+            "34": {
+                "lifespan_frames": 2,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.0
+            },
+            "35": {
+                "lifespan_frames": 71,
+                "ftf_variance_m2": 6.8e-05,
+                "ftf_std_m": 0.008234
+            },
+            "36": {
+                "lifespan_frames": 4,
+                "ftf_variance_m2": 2e-06,
+                "ftf_std_m": 0.00128
+            },
+            "37": {
+                "lifespan_frames": 16,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000413
+            },
+            "41": {
+                "lifespan_frames": 4,
+                "ftf_variance_m2": 9.4e-05,
+                "ftf_std_m": 0.009676
+            },
+            "45": {
+                "lifespan_frames": 1,
+                "ftf_variance_m2": null,
+                "ftf_std_m": null
+            },
+            "47": {
+                "lifespan_frames": 38,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000615
+            },
+            "48": {
+                "lifespan_frames": 624,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000677
+            },
+            "51": {
+                "lifespan_frames": 3,
+                "ftf_variance_m2": 1e-06,
+                "ftf_std_m": 0.000812
+            },
+            "53": {
+                "lifespan_frames": 3,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000319
+            },
+            "56": {
+                "lifespan_frames": 4,
+                "ftf_variance_m2": 8e-06,
+                "ftf_std_m": 0.002847
+            },
+            "57": {
+                "lifespan_frames": 157,
+                "ftf_variance_m2": 4.9e-05,
+                "ftf_std_m": 0.007018
+            },
+            "65": {
+                "lifespan_frames": 48,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000455
+            },
+            "72": {
+                "lifespan_frames": 365,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000382
+            },
+            "74": {
+                "lifespan_frames": 1158,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000551
+            },
+            "75": {
+                "lifespan_frames": 1,
+                "ftf_variance_m2": null,
+                "ftf_std_m": null
+            },
+            "80": {
+                "lifespan_frames": 3,
+                "ftf_variance_m2": 2.2e-05,
+                "ftf_std_m": 0.004743
+            },
+            "81": {
+                "lifespan_frames": 1,
+                "ftf_variance_m2": null,
+                "ftf_std_m": null
+            },
+            "89": {
+                "lifespan_frames": 148,
+                "ftf_variance_m2": 2.3e-05,
+                "ftf_std_m": 0.00484
+            },
+            "91": {
+                "lifespan_frames": 6,
+                "ftf_variance_m2": 5e-06,
+                "ftf_std_m": 0.002337
+            },
+            "98": {
+                "lifespan_frames": 9,
+                "ftf_variance_m2": 0.000272,
+                "ftf_std_m": 0.016486
+            },
+            "101": {
+                "lifespan_frames": 6,
+                "ftf_variance_m2": 4e-06,
+                "ftf_std_m": 0.002043
+            },
+            "102": {
+                "lifespan_frames": 4,
+                "ftf_variance_m2": 0.000519,
+                "ftf_std_m": 0.022777
+            },
+            "104": {
+                "lifespan_frames": 46,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000126
+            }
+        },
+        "total_unique_track_ids": 35,
+        "mean_track_lifespan_frames": 156.97,
+        "mean_ftf_variance_m2": 4.3e-05
+    }
+}

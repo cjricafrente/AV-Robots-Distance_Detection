@@ -1,0 +1,12 @@
+{
+    "calibration_resolution": "1280x720",
+    "hardware_delivered": "1920x1080",
+    "crop_applied": "none (aspect ratio matches)",
+    "pipeline_resolution": "640x360",
+    "scale_x": 0.5,
+    "scale_y": 0.5,
+    "FX": 522.9324,
+    "FY": 523.9088,
+    "CX": 335.8584,
+    "CY": 176.1981
+}

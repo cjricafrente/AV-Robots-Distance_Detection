@@ -1,0 +1,37 @@
+{
+    "run_name": "live_run_20260328-170933",
+    "filter_mode": 3,
+    "total_frames": 247,
+    "average_fps": 14.01,
+    "ground_truth_m": 0.5,
+    "thesis_metrics": {
+        "filter_mode": 3,
+        "MAE_m": 0.123015,
+        "dist_variance_m2": 0.015328,
+        "max_ftf_delta_m": 0.008396
+    },
+    "distance_accuracy": {
+        "primary_track_id": 1,
+        "candidates_after_filter": 1,
+        "tracks_rejected": 0,
+        "sample_count": 171,
+        "mean_dist_m": 0.4492,
+        "std_dist_m": 0.1238,
+        "MAE_m": 0.123,
+        "RMSE_m": 0.1338,
+        "p95_error_m": 0.2318
+    },
+    "temporal_stability": {
+        "per_track": {
+            "1": {
+                "lifespan_frames": 171,
+                "dist_variance_m2": 0.015328,
+                "ftf_std_m": 0.002884,
+                "max_ftf_delta_m": 0.008396
+            }
+        },
+        "total_unique_track_ids": 1,
+        "mean_track_lifespan_frames": 171.0,
+        "mean_dist_variance_m2": 0.015328
+    }
+}

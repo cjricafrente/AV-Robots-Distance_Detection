@@ -1,0 +1,86 @@
+[
+    {
+        "time": 1774685110.0060625,
+        "frame": 8,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 2
+    },
+    {
+        "time": 1774685110.065567,
+        "frame": 9,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 2
+    },
+    {
+        "time": 1774685110.3151188,
+        "frame": 13,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 2
+    },
+    {
+        "time": 1774685110.3781185,
+        "frame": 14,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 2
+    },
+    {
+        "time": 1774685111.9028091,
+        "frame": 38,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 2
+    },
+    {
+        "time": 1774685111.9643137,
+        "frame": 39,
+        "trigger": "Overtake_Planned",
+        "action": "OVERTAKE RIGHT AT 40.0 DEG (lateral_offset=0.258m)",
+        "target_track_id": 2
+    },
+    {
+        "time": 1774685116.59496,
+        "frame": 112,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 2
+    },
+    {
+        "time": 1774685118.1614997,
+        "frame": 136,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 2
+    },
+    {
+        "time": 1774685118.221015,
+        "frame": 137,
+        "trigger": "Overtake_Planned",
+        "action": "OVERTAKE RIGHT AT 40.0 DEG (lateral_offset=0.258m)",
+        "target_track_id": 2
+    },
+    {
+        "time": 1774685122.8347123,
+        "frame": 210,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 2
+    },
+    {
+        "time": 1774685124.384297,
+        "frame": 234,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 2
+    },
+    {
+        "time": 1774685124.4538035,
+        "frame": 235,
+        "trigger": "Overtake_Planned",
+        "action": "OVERTAKE RIGHT AT 40.0 DEG (lateral_offset=0.257m)",
+        "target_track_id": 2
+    }
+]

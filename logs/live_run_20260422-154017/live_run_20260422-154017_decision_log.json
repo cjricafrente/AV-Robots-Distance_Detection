@@ -1,0 +1,1598 @@
+[
+    {
+        "time": 1776843644.5495744,
+        "frame": 291,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843644.6154363,
+        "frame": 292,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843647.4994707,
+        "frame": 336,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843647.5566714,
+        "frame": 337,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843649.0604508,
+        "frame": 360,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843649.123887,
+        "frame": 361,
+        "trigger": "Dynamic_In_Decide_Abort",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843649.1814196,
+        "frame": 362,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843649.2463934,
+        "frame": 363,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843650.7814884,
+        "frame": 387,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843650.8404653,
+        "frame": 388,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843650.9059587,
+        "frame": 389,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843650.9709125,
+        "frame": 390,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.0354416,
+        "frame": 391,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.092469,
+        "frame": 392,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.1577857,
+        "frame": 393,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.2230334,
+        "frame": 394,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.286085,
+        "frame": 395,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.348689,
+        "frame": 396,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.4090242,
+        "frame": 397,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.4743872,
+        "frame": 398,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.5349011,
+        "frame": 399,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.6029341,
+        "frame": 400,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.6634731,
+        "frame": 401,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.7259011,
+        "frame": 402,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.7899194,
+        "frame": 403,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.8552241,
+        "frame": 404,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.9142694,
+        "frame": 405,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843651.9764893,
+        "frame": 406,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843652.042031,
+        "frame": 407,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843652.1055539,
+        "frame": 408,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843652.168118,
+        "frame": 409,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843652.226651,
+        "frame": 410,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843652.2964325,
+        "frame": 411,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843652.3588629,
+        "frame": 412,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843652.4188883,
+        "frame": 413,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843652.4854262,
+        "frame": 414,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843652.5468993,
+        "frame": 415,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843652.6079223,
+        "frame": 416,
+        "trigger": "Dynamic_In_Decide_Abort",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843652.6723716,
+        "frame": 417,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843652.7379334,
+        "frame": 418,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843654.2499452,
+        "frame": 442,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843654.3149765,
+        "frame": 443,
+        "trigger": "Dynamic_In_Decide_Abort",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843654.378446,
+        "frame": 444,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843654.440436,
+        "frame": 445,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843655.9880397,
+        "frame": 469,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.053315,
+        "frame": 470,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.1123323,
+        "frame": 471,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.1744187,
+        "frame": 472,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.242905,
+        "frame": 473,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.3005536,
+        "frame": 474,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.3644967,
+        "frame": 475,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.4313874,
+        "frame": 476,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.4984088,
+        "frame": 477,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.5569386,
+        "frame": 478,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.619972,
+        "frame": 479,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.687333,
+        "frame": 480,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.747943,
+        "frame": 481,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.8109803,
+        "frame": 482,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.8784246,
+        "frame": 483,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843656.9499085,
+        "frame": 484,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.014961,
+        "frame": 485,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.078106,
+        "frame": 486,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.1393366,
+        "frame": 487,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.2039037,
+        "frame": 488,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.269071,
+        "frame": 489,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.3349369,
+        "frame": 490,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.4179626,
+        "frame": 491,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.4889948,
+        "frame": 492,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.552393,
+        "frame": 493,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.6193867,
+        "frame": 494,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.6892664,
+        "frame": 495,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.7647028,
+        "frame": 496,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.8273861,
+        "frame": 497,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.903247,
+        "frame": 498,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843657.962334,
+        "frame": 499,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.0279348,
+        "frame": 500,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.097978,
+        "frame": 501,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.1691349,
+        "frame": 502,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.2358737,
+        "frame": 503,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.3107495,
+        "frame": 504,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.3698125,
+        "frame": 505,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.436881,
+        "frame": 506,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.496263,
+        "frame": 507,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.5640118,
+        "frame": 508,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.6433308,
+        "frame": 509,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.7160053,
+        "frame": 510,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.786925,
+        "frame": 511,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.8615587,
+        "frame": 512,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.9223373,
+        "frame": 513,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843658.9897985,
+        "frame": 514,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.0649662,
+        "frame": 515,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.1233933,
+        "frame": 516,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.1869974,
+        "frame": 517,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.255425,
+        "frame": 518,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.3309088,
+        "frame": 519,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.3919377,
+        "frame": 520,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.4573846,
+        "frame": 521,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.519368,
+        "frame": 522,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.5834177,
+        "frame": 523,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.645439,
+        "frame": 524,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.7114885,
+        "frame": 525,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.7694483,
+        "frame": 526,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.8339574,
+        "frame": 527,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.8995335,
+        "frame": 528,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843659.9564712,
+        "frame": 529,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.0274737,
+        "frame": 530,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.0882244,
+        "frame": 531,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.14975,
+        "frame": 532,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.2163022,
+        "frame": 533,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.2769542,
+        "frame": 534,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.3407118,
+        "frame": 535,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.4024205,
+        "frame": 536,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.4689574,
+        "frame": 537,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.5294883,
+        "frame": 538,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.6013415,
+        "frame": 539,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.6724143,
+        "frame": 540,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.7356904,
+        "frame": 541,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.7964425,
+        "frame": 542,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.8609715,
+        "frame": 543,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.9260218,
+        "frame": 544,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843660.9855516,
+        "frame": 545,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.049089,
+        "frame": 546,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.1132221,
+        "frame": 547,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.175611,
+        "frame": 548,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.2398062,
+        "frame": 549,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.302401,
+        "frame": 550,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.3654103,
+        "frame": 551,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.4334183,
+        "frame": 552,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.4930222,
+        "frame": 553,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.5654802,
+        "frame": 554,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.6370616,
+        "frame": 555,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.6974742,
+        "frame": 556,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.7623982,
+        "frame": 557,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.8234317,
+        "frame": 558,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.8850114,
+        "frame": 559,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843661.9544973,
+        "frame": 560,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.0174196,
+        "frame": 561,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.0830293,
+        "frame": 562,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.1594625,
+        "frame": 563,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.2330325,
+        "frame": 564,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.29605,
+        "frame": 565,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.3574862,
+        "frame": 566,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.4224675,
+        "frame": 567,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.4850483,
+        "frame": 568,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.5456502,
+        "frame": 569,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.616193,
+        "frame": 570,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.6912224,
+        "frame": 571,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.7534156,
+        "frame": 572,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.8174274,
+        "frame": 573,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.8813705,
+        "frame": 574,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843662.94692,
+        "frame": 575,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.0049458,
+        "frame": 576,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.0670993,
+        "frame": 577,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.1317258,
+        "frame": 578,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.1963592,
+        "frame": 579,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.2583895,
+        "frame": 580,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.3275247,
+        "frame": 581,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.3903425,
+        "frame": 582,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.4494195,
+        "frame": 583,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.510408,
+        "frame": 584,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.5815904,
+        "frame": 585,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.6520097,
+        "frame": 586,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.7175798,
+        "frame": 587,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.7834432,
+        "frame": 588,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.8434107,
+        "frame": 589,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843663.907006,
+        "frame": 590,
+        "trigger": "Overtake_Planned",
+        "action": "OVERTAKE RIGHT AT 40.0 DEG (lateral_offset=0.228m)",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776843668.5497453,
+        "frame": 662,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 7
+    },
+    {
+        "time": 1776843668.6214604,
+        "frame": 663,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 7
+    },
+    {
+        "time": 1776843671.7803805,
+        "frame": 710,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 17
+    },
+    {
+        "time": 1776843671.8445144,
+        "frame": 711,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 17
+    },
+    {
+        "time": 1776843672.2874503,
+        "frame": 718,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 17
+    },
+    {
+        "time": 1776843673.0831802,
+        "frame": 730,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843673.1473856,
+        "frame": 731,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843673.9933116,
+        "frame": 744,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843674.0604312,
+        "frame": 745,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843675.5672414,
+        "frame": 768,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843675.6423948,
+        "frame": 769,
+        "trigger": "Overtake_Planned",
+        "action": "OVERTAKE RIGHT AT 29.7 DEG (lateral_offset=0.233m)",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843697.6546993,
+        "frame": 1057,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843697.7394266,
+        "frame": 1058,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843701.7319334,
+        "frame": 1110,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843715.4963684,
+        "frame": 1290,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843715.5723834,
+        "frame": 1291,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843718.1689136,
+        "frame": 1324,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843718.2624607,
+        "frame": 1325,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843719.7765667,
+        "frame": 1345,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843719.846604,
+        "frame": 1346,
+        "trigger": "Dynamic_In_Decide_Abort",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843719.9231973,
+        "frame": 1347,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843719.9922247,
+        "frame": 1348,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843722.0393007,
+        "frame": 1374,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843723.6071777,
+        "frame": 1394,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843723.6882055,
+        "frame": 1395,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843723.7697313,
+        "frame": 1396,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843723.8492568,
+        "frame": 1397,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843723.9281406,
+        "frame": 1398,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843724.001175,
+        "frame": 1399,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843724.080207,
+        "frame": 1400,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843724.1582282,
+        "frame": 1401,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843724.2412677,
+        "frame": 1402,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843724.334344,
+        "frame": 1403,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843724.416136,
+        "frame": 1404,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843724.493177,
+        "frame": 1405,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843724.5736976,
+        "frame": 1406,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843724.6572206,
+        "frame": 1407,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843724.725254,
+        "frame": 1408,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843724.790295,
+        "frame": 1409,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843724.86431,
+        "frame": 1410,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843724.9434297,
+        "frame": 1411,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.0174587,
+        "frame": 1412,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.1004925,
+        "frame": 1413,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.1700194,
+        "frame": 1414,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.2424963,
+        "frame": 1415,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.3141289,
+        "frame": 1416,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.3756602,
+        "frame": 1417,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.441426,
+        "frame": 1418,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.506469,
+        "frame": 1419,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.5815034,
+        "frame": 1420,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.6474876,
+        "frame": 1421,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.7125092,
+        "frame": 1422,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.7963166,
+        "frame": 1423,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.8698375,
+        "frame": 1424,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843725.9493606,
+        "frame": 1425,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843726.0322502,
+        "frame": 1426,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843726.1063836,
+        "frame": 1427,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843726.16792,
+        "frame": 1428,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843726.241466,
+        "frame": 1429,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843726.3184953,
+        "frame": 1430,
+        "trigger": "Secondary_Block_Waiting",
+        "action": "HOLD_DECIDE",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843726.393526,
+        "frame": 1431,
+        "trigger": "Overtake_Planned",
+        "action": "OVERTAKE RIGHT AT 40.0 DEG (lateral_offset=0.230m)",
+        "target_track_id": 24
+    },
+    {
+        "time": 1776843738.2903214,
+        "frame": 1582,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 45
+    }
+]

@@ -1,0 +1,79 @@
+{
+    "run_name": "live_run_20260425-100336",
+    "total_frames": 623,
+    "average_fps": 14.23,
+    "ground_truth_m": 0.5,
+    "distance_accuracy": {
+        "primary_track_id": 1,
+        "candidates_after_filter": 9,
+        "tracks_rejected": 2,
+        "sample_count": 200,
+        "mean_dist_m": 0.3226,
+        "std_dist_m": 0.0005,
+        "MAE_m": 0.1774,
+        "RMSE_m": 0.1774,
+        "p95_error_m": 0.1784
+    },
+    "temporal_stability": {
+        "per_track": {
+            "1": {
+                "lifespan_frames": 200,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000151
+            },
+            "10": {
+                "lifespan_frames": 104,
+                "ftf_variance_m2": 4e-06,
+                "ftf_std_m": 0.001968
+            },
+            "16": {
+                "lifespan_frames": 2,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.0
+            },
+            "17": {
+                "lifespan_frames": 2,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.0
+            },
+            "19": {
+                "lifespan_frames": 1,
+                "ftf_variance_m2": null,
+                "ftf_std_m": null
+            },
+            "20": {
+                "lifespan_frames": 1,
+                "ftf_variance_m2": null,
+                "ftf_std_m": null
+            },
+            "21": {
+                "lifespan_frames": 3,
+                "ftf_variance_m2": 1.3e-05,
+                "ftf_std_m": 0.003562
+            },
+            "23": {
+                "lifespan_frames": 138,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.00043
+            },
+            "35": {
+                "lifespan_frames": 2,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.0
+            },
+            "44": {
+                "lifespan_frames": 6,
+                "ftf_variance_m2": 1.8e-05,
+                "ftf_std_m": 0.004256
+            },
+            "55": {
+                "lifespan_frames": 2,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.0
+            }
+        },
+        "total_unique_track_ids": 11,
+        "mean_track_lifespan_frames": 41.91,
+        "mean_ftf_variance_m2": 4e-06
+    }
+}

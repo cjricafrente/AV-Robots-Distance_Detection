@@ -1,0 +1,16 @@
+[
+    {
+        "time": 1776908333.6498206,
+        "frame": 1,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1776908333.7456708,
+        "frame": 2,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 1
+    }
+]

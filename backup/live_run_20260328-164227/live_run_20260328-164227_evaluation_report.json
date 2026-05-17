@@ -1,0 +1,13 @@
+{
+    "run_name": "live_run_20260328-164227",
+    "total_frames": 263,
+    "average_fps": 14.31,
+    "ground_truth_m": 0.5,
+    "distance_accuracy": "no_detections_logged",
+    "temporal_stability": {
+        "per_track": {},
+        "total_unique_track_ids": 0,
+        "mean_track_lifespan_frames": 0.0,
+        "mean_ftf_variance_m2": null
+    }
+}

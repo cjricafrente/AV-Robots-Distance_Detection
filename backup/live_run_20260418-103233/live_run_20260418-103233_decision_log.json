@@ -1,0 +1,156 @@
+[
+    {
+        "time": 1776479607.789007,
+        "frame": 979,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 3
+    },
+    {
+        "time": 1776479607.8505304,
+        "frame": 980,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 3
+    },
+    {
+        "time": 1776479608.1631052,
+        "frame": 985,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 5
+    },
+    {
+        "time": 1776479608.2279365,
+        "frame": 986,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 5
+    },
+    {
+        "time": 1776479609.1568587,
+        "frame": 1004,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 13
+    },
+    {
+        "time": 1776479609.2088587,
+        "frame": 1005,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 13
+    },
+    {
+        "time": 1776479610.0056148,
+        "frame": 1022,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 13
+    },
+    {
+        "time": 1776479610.054139,
+        "frame": 1023,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 13
+    },
+    {
+        "time": 1776479610.336711,
+        "frame": 1029,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 13
+    },
+    {
+        "time": 1776479610.385711,
+        "frame": 1030,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 13
+    },
+    {
+        "time": 1776479610.659383,
+        "frame": 1036,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 13
+    },
+    {
+        "time": 1776479610.7043831,
+        "frame": 1037,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 13
+    },
+    {
+        "time": 1776479611.0315037,
+        "frame": 1044,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 13
+    },
+    {
+        "time": 1776479611.0815036,
+        "frame": 1045,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 13
+    },
+    {
+        "time": 1776479613.9613395,
+        "frame": 1105,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 28
+    },
+    {
+        "time": 1776479614.0538611,
+        "frame": 1107,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 29
+    },
+    {
+        "time": 1776479614.4654682,
+        "frame": 1115,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 31
+    },
+    {
+        "time": 1776479614.5244741,
+        "frame": 1116,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 31
+    },
+    {
+        "time": 1776479614.579497,
+        "frame": 1117,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 32
+    },
+    {
+        "time": 1776479614.6400218,
+        "frame": 1118,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 32
+    },
+    {
+        "time": 1776479614.696022,
+        "frame": 1119,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 31
+    },
+    {
+        "time": 1776479615.8322217,
+        "frame": 1139,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 32
+    }
+]

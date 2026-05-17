@@ -1,0 +1,5 @@
+frame_id,track_id,class,dist_m,speed_ms,ttc_s,state
+3,1,Obstacle,0.746,0.0,inf,STATIC
+4,1,Obstacle,0.746,-0.0,inf,DYNAMIC
+5,1,Obstacle,0.746,-0.0,inf,DYNAMIC
+6,1,Obstacle,0.746,-0.0,inf,DYNAMIC

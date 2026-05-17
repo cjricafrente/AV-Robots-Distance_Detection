@@ -1,0 +1,49 @@
+{
+    "run_name": "live_run_20260424-165308",
+    "filter_mode": 1,
+    "total_frames": 565,
+    "average_fps": 9.91,
+    "ground_truth_m": 0.52,
+    "thesis_metrics": {
+        "filter_mode": 1,
+        "MAE_m": 0.344809,
+        "dist_variance_m2": 0.090802,
+        "max_ftf_delta_m": 0.083237
+    },
+    "distance_accuracy": {
+        "primary_track_id": 1,
+        "candidates_after_filter": 2,
+        "tracks_rejected": 1,
+        "sample_count": 353,
+        "mean_dist_m": 0.834,
+        "std_dist_m": 0.3013,
+        "MAE_m": 0.3448,
+        "RMSE_m": 0.4352,
+        "p95_error_m": 0.6175
+    },
+    "temporal_stability": {
+        "per_track": {
+            "1": {
+                "lifespan_frames": 353,
+                "dist_variance_m2": 0.090802,
+                "ftf_std_m": 0.007992,
+                "max_ftf_delta_m": 0.083237
+            },
+            "2": {
+                "lifespan_frames": 518,
+                "dist_variance_m2": 0.477769,
+                "ftf_std_m": 0.033894,
+                "max_ftf_delta_m": 0.470346
+            },
+            "6": {
+                "lifespan_frames": 1,
+                "dist_variance_m2": null,
+                "ftf_std_m": null,
+                "max_ftf_delta_m": null
+            }
+        },
+        "total_unique_track_ids": 3,
+        "mean_track_lifespan_frames": 290.67,
+        "mean_dist_variance_m2": 0.284285
+    }
+}

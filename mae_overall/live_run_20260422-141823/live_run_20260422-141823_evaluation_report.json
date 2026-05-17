@@ -1,0 +1,29 @@
+{
+    "run_name": "live_run_20260422-141823",
+    "total_frames": 214,
+    "average_fps": 9.49,
+    "ground_truth_m": 0.5,
+    "distance_accuracy": {
+        "primary_track_id": 1,
+        "candidates_after_filter": 1,
+        "tracks_rejected": 0,
+        "sample_count": 212,
+        "mean_dist_m": 0.5513,
+        "std_dist_m": 0.0009,
+        "MAE_m": 0.0513,
+        "RMSE_m": 0.0513,
+        "p95_error_m": 0.0523
+    },
+    "temporal_stability": {
+        "per_track": {
+            "1": {
+                "lifespan_frames": 212,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000309
+            }
+        },
+        "total_unique_track_ids": 1,
+        "mean_track_lifespan_frames": 212.0,
+        "mean_ftf_variance_m2": 0.0
+    }
+}

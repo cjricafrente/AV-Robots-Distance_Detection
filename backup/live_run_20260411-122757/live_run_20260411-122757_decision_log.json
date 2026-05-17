@@ -1,0 +1,72 @@
+[
+    {
+        "time": 1775881678.4444995,
+        "frame": 1,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775881678.5570145,
+        "frame": 2,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775881678.8186321,
+        "frame": 6,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775881678.881632,
+        "frame": 7,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775881680.399798,
+        "frame": 31,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775881680.4643102,
+        "frame": 32,
+        "trigger": "Overtake_Planned",
+        "action": "OVERTAKE RIGHT AT 39.2 DEG (lateral_offset=0.250m)",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775881685.0883691,
+        "frame": 105,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775881686.6102097,
+        "frame": 129,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775881686.6707144,
+        "frame": 130,
+        "trigger": "Overtake_Planned",
+        "action": "OVERTAKE RIGHT AT 39.5 DEG (lateral_offset=0.251m)",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775881693.6275852,
+        "frame": 243,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 9
+    }
+]

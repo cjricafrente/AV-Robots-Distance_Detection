@@ -1,0 +1,3 @@
+frame_id,timestamp,fps,total_detections,global_action
+1,1776908333.6498206,30.44,1,STOP
+2,1776908333.7456708,0.12,1,STOP

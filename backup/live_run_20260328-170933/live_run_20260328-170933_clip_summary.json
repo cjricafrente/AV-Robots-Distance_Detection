@@ -1,0 +1,10 @@
+{
+    "total_frames": 247,
+    "average_fps": 14.01,
+    "action_distribution": {
+        "GO": 76,
+        "SLOW": 41,
+        "STOP": 97,
+        "OVERTAKE": 33
+    }
+}

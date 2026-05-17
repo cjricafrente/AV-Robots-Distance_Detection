@@ -1,0 +1,142 @@
+[
+    {
+        "time": 1775880563.2636213,
+        "frame": 1,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880563.5528488,
+        "frame": 2,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880564.3651428,
+        "frame": 6,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880564.5755267,
+        "frame": 7,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 5
+    },
+    {
+        "time": 1775880564.7499874,
+        "frame": 8,
+        "trigger": "Dynamic_Confirmed",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 5
+    },
+    {
+        "time": 1775880564.9425843,
+        "frame": 9,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880565.1437333,
+        "frame": 10,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 5
+    },
+    {
+        "time": 1775880566.6804335,
+        "frame": 23,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880566.7479424,
+        "frame": 24,
+        "trigger": "Dynamic_In_Decide_Abort",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880566.8154523,
+        "frame": 25,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880566.9298737,
+        "frame": 26,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880568.5333703,
+        "frame": 48,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880568.6063538,
+        "frame": 49,
+        "trigger": "Overtake_Planned",
+        "action": "OVERTAKE LEFT AT 34.8 DEG (lateral_offset=0.233m)",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880573.2944963,
+        "frame": 115,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880574.8383539,
+        "frame": 138,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880574.9013565,
+        "frame": 139,
+        "trigger": "Dynamic_In_Decide_Abort",
+        "action": "STOP_DYNAMIC",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880574.9591494,
+        "frame": 140,
+        "trigger": "Dynamic_Cleared",
+        "action": "FOLLOW",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880575.0216098,
+        "frame": 141,
+        "trigger": "Distance_or_TTC_Safety",
+        "action": "OBSERVE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880576.5263588,
+        "frame": 163,
+        "trigger": "Static_Confirmed_EnterDecide",
+        "action": "DECIDE",
+        "target_track_id": 1
+    },
+    {
+        "time": 1775880576.5913565,
+        "frame": 164,
+        "trigger": "Overtake_Planned",
+        "action": "OVERTAKE LEFT AT 34.8 DEG (lateral_offset=0.233m)",
+        "target_track_id": 1
+    }
+]

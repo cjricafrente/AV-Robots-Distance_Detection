@@ -1,0 +1,69 @@
+{
+    "run_name": "live_run_20260418-103233",
+    "total_frames": 1367,
+    "average_fps": 18.58,
+    "ground_truth_m": 0.5,
+    "distance_accuracy": {
+        "primary_track_id": 13,
+        "candidates_after_filter": 9,
+        "tracks_rejected": 0,
+        "sample_count": 35,
+        "mean_dist_m": 0.3643,
+        "std_dist_m": 0.0014,
+        "MAE_m": 0.1357,
+        "RMSE_m": 0.1357,
+        "p95_error_m": 0.1374
+    },
+    "temporal_stability": {
+        "per_track": {
+            "3": {
+                "lifespan_frames": 3,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000524
+            },
+            "5": {
+                "lifespan_frames": 3,
+                "ftf_variance_m2": 0.0,
+                "ftf_std_m": 0.000206
+            },
+            "13": {
+                "lifespan_frames": 35,
+                "ftf_variance_m2": 1e-06,
+                "ftf_std_m": 0.000907
+            },
+            "23": {
+                "lifespan_frames": 3,
+                "ftf_variance_m2": 0.000922,
+                "ftf_std_m": 0.030363
+            },
+            "28": {
+                "lifespan_frames": 1,
+                "ftf_variance_m2": null,
+                "ftf_std_m": null
+            },
+            "29": {
+                "lifespan_frames": 1,
+                "ftf_variance_m2": null,
+                "ftf_std_m": null
+            },
+            "30": {
+                "lifespan_frames": 1,
+                "ftf_variance_m2": null,
+                "ftf_std_m": null
+            },
+            "31": {
+                "lifespan_frames": 10,
+                "ftf_variance_m2": 4e-06,
+                "ftf_std_m": 0.001942
+            },
+            "32": {
+                "lifespan_frames": 32,
+                "ftf_variance_m2": 0.000918,
+                "ftf_std_m": 0.030292
+            }
+        },
+        "total_unique_track_ids": 9,
+        "mean_track_lifespan_frames": 9.89,
+        "mean_ftf_variance_m2": 0.000307
+    }
+}
