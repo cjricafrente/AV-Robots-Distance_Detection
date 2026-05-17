@@ -34,7 +34,7 @@ LOG_FLUSH_INTERVAL = 30
 #   FILTER_MODE = 3  →  Raw GPM distance → Median filter → Kalman  (default)
 #
 # Run the script three times with modes 1, 2, 3 to generate comparative CSVs.
-FILTER_MODE = 2
+FILTER_MODE = 1
 
 # =============================================================
 # CALIBRATION RESOLUTION (must match the NPZ file)
