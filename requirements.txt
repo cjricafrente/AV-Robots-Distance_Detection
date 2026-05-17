@@ -1,3 +1,9 @@
+<<<<<<< HEAD
 opencv-contrib-python
 numpy
 ultralytics
+=======
+opencv-contrib-python
+numpy
+ultralytics
+>>>>>>> 94f2ccf65ca0e7d11679167c3c3008a168eb7924
